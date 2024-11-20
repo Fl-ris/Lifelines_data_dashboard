@@ -1,0 +1,71 @@
+---
+title: "Lifelines Datadashboard"
+output: html_notebook
+---
+
+
+### Introduction ###
+
+
+
+**Data:**
+
+The data used is a synthetic dataset, this means that the values are not the exact same as the ones that were measured but a statisticallcly representative dataset. 
+This is done to enhance privacy of the participants. The methods used for this are: differential privacy and k-anonymity. This way the relationsships between the variables are conserverd. 
+Source: https://www.lifelines-biobank.com/synthetic-data-a-new-step-forward-in-data-availability-at-lifelines-in-collaboration-with-syntho
+
+
+
+```{r}
+
+library(tidyverse)
+
+```
+
+
+
+```{r}
+lifelines_df <- read.csv(file = "/home/floris/Documenten/Data_set/Lifelines/2024/Dataset/Lifelines Public Health dataset - 2024.csv", header = TRUE)
+
+```
+
+
+```{r}
+
+lifelines_long <- lifelines_df %>% pivot_longer(cols = GENDER)
+  
+
+ggplot(data = lifelines_long, mapping = aes(x = HEIGHT_T1)) +
+  geom_density() +
+  xlab("") +
+  ylab("") +
+  theme_minimal()
+
+  
+
+```
+
+
+```{r}
+
+neighborhood_satisfaction <- lifelines_df$NEIGHBOURHOOD1_T2 %>%  factor(levels = c(1:10), labels = c(1:10))
+
+neighborhood_characteristics <- lifelines_df$NEIGHBOURHOOD2_T2 %>%  factor(levels = c(1:10), labels = c(1:10))
+
+neighborhood_Unpleasantness <- lifelines_df$NEIGHBOURHOOD3_T2 %>%  factor(levels = c(1:10), labels = c(1:10))
+
+neighborhood_Unpleasantness <- lifelines_df$NEIGHBOURHOOD4_T2 %>%  factor(levels = c(1:10), labels = c(1:10))
+
+```
+
+
+
+```{r}
+
+
+
+```
+
+
+
+
