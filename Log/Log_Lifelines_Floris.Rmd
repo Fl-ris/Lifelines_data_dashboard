@@ -1,6 +1,8 @@
 ---
 title: "Lifelines Datadashboard"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 
@@ -15,7 +17,8 @@ This is done to enhance privacy of the participants. The methods used for this a
 Source: https://www.lifelines-biobank.com/synthetic-data-a-new-step-forward-in-data-availability-at-lifelines-in-collaboration-with-syntho
 
 
-
+**Libraries**
+The following libraries are used:
 ```{r}
 
 library(tidyverse)
@@ -25,46 +28,193 @@ library(tidyverse)
 
 
 ```{r}
+
 lifelines_df <- read.csv(file = "/home/floris/Documenten/Data_set/Lifelines/2024/Dataset/Lifelines Public Health dataset - 2024.csv", header = TRUE)
 
 ```
 
 
+
+### Making factors ###
+Making factors for the schale data using the following variables:
+
+NEIGHBOURHOOD1_T2 'Satisfaction with the current living environment (scored on a scale of 1 to 10) at second assessment (T2)'
+
+NEIGHBOURHOOD2_T2 'Characteristics of neighbourhood (ranging from a very green neighbourhood (1) to a neighbourhood with practically no greenery (5)
+
+NEIGHBOURHOOD3_T2 'Unpleasantness to live in this neighbourhood (ranging from completely disagree (1) to completely agree (5)
+
+NEIGHBOURHOOD4_T2 'If possible, would like to move from this neighbourhood (ranging from completely disagree (1) to completely agree (5))
+
+NEIGHBOURHOOD5_T2 'Attached to this neighbourhood (ranging from completely disagree (1) to completely agree (5))
+
+NEIGHBOURHOOD6_T2 'Feels at home in this neighbourhood (ranging from completely disagree (1) to completely agree (5))
+
+
+The following factors are about socioeonomically determined variables:
+
+```{r Socioeconomical factors}
+
+lifelines_df$neighborhood_satisfaction <- lifelines_df$NEIGHBOURHOOD1_T2 %>%  factor(levels = c(1:10), labels = c(1:10))
+
+lifelines_df$neighborhood_characteristics <- lifelines_df$NEIGHBOURHOOD2_T2 %>%  factor(levels = c(1:5), labels = c(1:5))
+
+lifelines_df$neighborhood_unpleasantness <- lifelines_df$NEIGHBOURHOOD3_T2 %>%  factor(levels = c(1:5), labels = c("Completely agree", "Agree", "Neutral", "Disagree", "Completely disagree"))
+
+lifelines_df$neighborhood_moving_away <- lifelines_df$NEIGHBOURHOOD4_T2 %>%  factor(levels = c(1:5), labels = c("Completely agree", "Agree", "Neutral", "Disagree", "Completely disagree"))
+
+lifelines_df$neighborhood_attached <- lifelines_df$NEIGHBOURHOOD5_T2 %>%  factor(levels = c(1:5), labels = c("Completely agree", "Agree", "Neutral", "Disagree", "Completely disagree"))
+
+lifelines_df$neighborhood_feel_at_home <- lifelines_df$NEIGHBOURHOOD6_T2 %>%  factor(levels = c(1:5), labels = c("Completely agree", "Agree", "Neutral", "Disagree", "Completely disagree"))
+
+lifelines_df$FINANCE_T1 <- lifelines_df$FINANCE_T1 %>% factor(levels = c(1:10),  labels = c("I do not know", "I don't want to answer", "Less than 750", "750 - 1000", "1000 - 1500", "1500 - 2000", "2000 - 2500", "2500 - 3000", "3000 - 3500", "More than 3500"))
+
+# Quality of life, 0 = low QOL and 1 = 
+lifelines_df$LOW_QUALITY_OF_LIFE_T1  <- lifelines_df$LOW_QUALITY_OF_LIFE_T1 %>%  factor(levels = c(0:1), labels = c("Mediocre", "False"))
+
+lifelines_df$LOW_QUALITY_OF_LIFE_T2 <- lifelines_df$LOW_QUALITY_OF_LIFE_T2 %>%  factor(levels = c(0,1), labels = c("Low/Mediocre", "False"))
+
+
+lifelines_df$SMOKING <- lifelines_df$SMOKING %>%  factor(levels = c(0,1), labels = c("Smoking", "Non-smoking"))
+
+```
+
+The following factors are about body "specifications" like age and weight.
+
+
+```{r Personal factors}
+
+
+lifelines_df$GENDER <- lifelines_df$GENDER %>%  factor(levels = c(1:2), labels = c("Male", "Female"))
+
+
+```
+
+
 ```{r}
 
-lifelines_long <- lifelines_df %>% pivot_longer(cols = GENDER)
-  
 
-ggplot(data = lifelines_long, mapping = aes(x = HEIGHT_T1)) +
-  geom_density() +
+
+```
+
+The following figure displays the distribution of height:
+```{r density plot age}
+
+# To make the data in the long format:
+#lifelines_long <- lifelines_df %>% pivot_longer(cols = ZIP_CODE)
+  
+# Plot it using facet_wrap to see the difference between the genders:
+ggplot(data = lifelines_df, mapping = aes(y = HEIGHT_T1)) +
+  geom_boxplot(fill = "darkblue", alpha = 0.7) +
   xlab("") +
-  ylab("") +
+  ylab("Height") +
+  facet_wrap(~GENDER) +
+  ggtitle("Height distribution")
   theme_minimal()
 
-  
+
 
 ```
+
+```{r}
+
+#ggplot(data = lifelines_df, mapping = aes(y =  ))
+
+```
+
+21-11-2024:
+
+Using facet_wrap, the differences in weight distribution is displayed in de following plot.
+Even though the mean weight for the females is lower than the one of the males, the spread is highter, this was quantified using ....
+
+
+
+
+```{r weight distribution}
+
+ggplot(data = lifelines_df, mapping = aes(y = WEIGHT_T1) ) +
+  geom_boxplot(fill = "green", alpha = 0.5) +
+  xlab("Count: ") +
+  ylab("Weight") +
+  ggtitle("Participant weight:") +
+  facet_wrap(~GENDER)
+  theme_minimal()
+
+
+```
+
+For the woman, the amount of pregnacies was visualized in the following plot:
+
+```{r}
+
+ggplot(data = lifelines_df, mapping = aes(y = PREGNANCIES)) +
+  geom_boxplot(fill = "blue", alpha=0.6) +
+  xlab("") +
+  ylab("Pregnancies:") +
+  theme_minimal()
+```
+
+
+```{r gender distribution}
+ggplot(data = lifelines_df, mapping = aes(y = GENDER) ) +
+  geom_bar(fill = "blue", alpha = 0.6) +
+  xlab("Count: ") +
+  ylab("Gender") +
+  ggtitle("Participant count:") +
+  theme_minimal()
+
+
+```
+```{r}
+
+FINANCE <- lifelines_df[!is.na(lifelines_df$FINANCE_T1), ]
+
+
+ggplot(data = lifelines_df, mapping = aes(x = neighborhood_satisfaction, y = FINANCE_T1)) +
+  geom_jitter() +
+  xlab("") +
+  ylab("") +
+  ggtitle("Correlation between wealth and neighborhood satisfaction") +
+  theme_minimal()
+
+
+```
+### Using Generalized linear models to quantify correlations: ###
+A generalized linear model is used to see if there is a correlation between for example; the amount of money people make montly and what their opinion is on their living arrangements, mainly the neighborhood in wich they live. 
+In this codechunk, this opinion is used as outcome variable and montly income is the predictor variable. As the summary states, there is a significant correlation between these two variable.
+The p-value is: 0.000198 *** for 
+
+Here the variables used are opinion of living  arragements as outcome variable and education as predictor. There appears to be a sigificant correlation between these two variables. 
 
 
 ```{r}
 
-neighborhood_satisfaction <- lifelines_df$NEIGHBOURHOOD1_T2 %>%  factor(levels = c(1:10), labels = c(1:10))
 
-neighborhood_characteristics <- lifelines_df$NEIGHBOURHOOD2_T2 %>%  factor(levels = c(1:10), labels = c(1:10))
+neighborhood_prediction <- glm(formula = lifelines_df$NEIGHBOURHOOD1_T2 ~ lifelines_df$EDUCATION_LOWER_T1 + lifelines_df$NEIGHBOURHOOD4_T2, na.action = na.exclude)
 
-neighborhood_Unpleasantness <- lifelines_df$NEIGHBOURHOOD3_T2 %>%  factor(levels = c(1:10), labels = c(1:10))
+neighborhood_prediction_p <- predict(neighborhood_prediction)
 
-neighborhood_Unpleasantness <- lifelines_df$NEIGHBOURHOOD4_T2 %>%  factor(levels = c(1:10), labels = c(1:10))
+
+plot(neighborhood_prediction)
 
 ```
-
-
-
 ```{r}
-
-
-
+#summary(neighborhood_prediction)
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
