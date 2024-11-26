@@ -1,6 +1,7 @@
 ---
 title: "Lifelines Datadashboard"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -168,10 +169,10 @@ ggplot(data = lifelines_df, mapping = aes(y = GENDER) ) +
 ```{r}
 
 FINANCE <- lifelines_df[!is.na(lifelines_df$FINANCE_T1), ]
-
+#FINANCE <- subset(lifelines_df[FINANCE])
 
 ggplot(data = lifelines_df, mapping = aes(x = neighborhood_satisfaction, y = FINANCE_T1)) +
-  geom_jitter() +
+  geom_jitter(mapping = aes(alpha = 0.5)) +
   xlab("") +
   ylab("") +
   ggtitle("Correlation between wealth and neighborhood satisfaction") +
@@ -179,8 +180,13 @@ ggplot(data = lifelines_df, mapping = aes(x = neighborhood_satisfaction, y = FIN
 
 
 ```
+
+The plot above displays the neighborhood satisfaction score for every salary class. 
+There is a clear trend where people who earn more are more satisfied with their neighborhood. 
+
+
 ### Using Generalized linear models to quantify correlations: ###
-A generalized linear model is used to see if there is a correlation between for example; the amount of money people make montly and what their opinion is on their living arrangements, mainly the neighborhood in wich they live. 
+A generalized linear model is used to see if there is a correlation between for example; the amount of money people make monthly and what their opinion is on their living arrangements, mainly the neighborhood in wich they live. 
 In this codechunk, this opinion is used as outcome variable and montly income is the predictor variable. As the summary states, there is a significant correlation between these two variable.
 The p-value is: 0.000198 *** for 
 
@@ -188,30 +194,19 @@ Here the variables used are opinion of living  arragements as outcome variable a
 
 
 ```{r}
-
-
 neighborhood_prediction <- glm(formula = lifelines_df$NEIGHBOURHOOD1_T2 ~ lifelines_df$EDUCATION_LOWER_T1 + lifelines_df$NEIGHBOURHOOD4_T2, na.action = na.exclude)
 
 neighborhood_prediction_p <- predict(neighborhood_prediction)
 
+summary(neighborhood_prediction)
+```
+According to the glm() prediction above, both education and the wish to move away from their current house are significant predictors for the satisfaction score.  
+The latter predictors is obvious, if people want to move away, they are most likely not satisfied with their current place. 
 
+```{r}
 plot(neighborhood_prediction)
 
 ```
-```{r}
-#summary(neighborhood_prediction)
-```
-
-
-
-
-
-
-
-
-
-
-
 
 
 
