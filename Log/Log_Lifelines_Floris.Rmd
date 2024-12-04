@@ -29,8 +29,10 @@ library(tidyverse)
 
 
 ```{r}
+# Without factors (test)
+lifelines <- read.csv(file = "/home/floris/Documents/Data_set/Lifelines/2024/Dataset/Lifelines Public Health dataset - 2024.csv", header = TRUE)
 
-lifelines_df <- read.csv(file = "/home/floris/Documenten/Data_set/Lifelines/2024/Dataset/Lifelines Public Health dataset - 2024.csv", header = TRUE)
+lifelines_df <- read.csv(file = "/home/floris/Documents/Data_set/Lifelines/2024/Dataset/Lifelines Public Health dataset - 2024.csv", header = TRUE)
 
 ```
 
@@ -207,10 +209,94 @@ The latter predictors is obvious, if people want to move away, they are most lik
 plot(neighborhood_prediction)
 
 ```
+27-11-2024:
+
+
+```{r}
+
+test <- data.frame(hp=seq(min(mtcars$hp), max(mtcars$hp),len=500))
+
+```
+
+```{r}
+test2 <- glm(formula = lifelines$SMOKING ~ lifelines_df$EDUCATION_LOWER_T1 + lifelines_df$NEIGHBOURHOOD4_T2, na.action = na.exclude)
+
+test2_p <- predict(neighborhood_prediction)
+
+summary(neighborhood_prediction)
+
+plot(test2)
+```
+### Statistical tests:
+
+First, to check for a normal distribution, I wanted to use the Shapiro-wilk test on the data. 
+The Shapiro-wilk test can only handle up to 5000 samples and given that this Lifelines dataset contains over 16000, this test can not be used. 
+Therefore, the anderson-darling test will be used. 
+
+```{r}
+library(nortest)
+
+normality_height <- ad.test(lifelines_df$HEIGHT_T1)
+normality_height
+
+
+
+```
+```{r}
+
+test3 <- glm(formula = lifelines$RESPIRATORY_DISEASE_T1 ~ lifelines_df$SMOKING + lifelines_df$LOW_QUALITY_OF_LIFE_T1, na.action = na.exclude)
+
+test2_p <- predict(test3)
+
+summary(test3)
+
+plot(test3)
 
 
 
 
+```
+28-11-2024:
+
+```{r}
+
+lifelines_male <- lifelines_df %>% 
+  filter(GENDER == "Male")
+
+lifelines_female <- lifelines_df %>% 
+  filter(GENDER == "Female")
+
+#filter_function <- function(option) {
+#  output <- lifelines_df %>% 
+#    filter(GENDER == fpaste(option))
+#  
+#}
+
+ad_mheight <- ad.test(lifelines_male$HEIGHT_T1)
+
+ad_fheight <- ad.test(lifelines_female$HEIGHT_T1)
+
+ad_mweight <- ad.test(lifelines_male$WEIGHT_T1)
+
+ad_fweight <- ad.test(lifelines_female$WEIGHT_T1)
+
+ad_mbmi <- ad.test(lifelines_male$BMI_T1)
+  
+ad_fbmi <- ad.test(lifelines_female$BMI_T1)
+
+p <- c(ad_mheight$p.value, ad_fheight$p.value)
 
 
+
+```
+
+```{r}
+
+t.test(lifelines_female$HEIGHT_T1, lifelines_male$HEIGHT_T1)
+
+```
+
+```{r}
+
+```
 
