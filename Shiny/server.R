@@ -10,5 +10,12 @@ server <- function(input, output) {
          main = "b")
     
   })
-  
+  output$distHeight <- renderPlot({
+    ages <- lifelines_df$HEIGHT_T1
+    hist(ages, col = "#807fc3", border = "white",
+         xlab = "aa",
+         main = "a")
+    
+    
+  })
 }

@@ -1,5 +1,6 @@
 ui <- page_sidebar(
-
+ titlePanel("Lifelines Visualizer:"),
+ 
   mainPanel(
     tabsetPanel(
       tabPanel("Correlations", plotOutput("plot")),
@@ -10,11 +11,11 @@ ui <- page_sidebar(
 
 
   sidebar = sidebar(
-    
+    card(
     selectInput(
       inputId="input_1",
       label="What to compare?",
-      choices=list(`East Coast` = list("Participant", "Province", "CT"),
+      choices=list(`cat1` = list("Participant", "Province", "CT"),
            `cat2` = list("aa", "bb", "cc"),
            `cat3` = list("aa", "aa", "a")),
       selected = NULL,
@@ -22,9 +23,12 @@ ui <- page_sidebar(
       selectize = TRUE,
       width = NULL,
       size = NULL
+     
     ),
-
     
+  ),
+
+  card(
     sliderInput(
       inputId = "bins",
       label = "Number of bins:",
@@ -32,6 +36,7 @@ ui <- page_sidebar(
       max = 50,
       value = 30
     ),
+
     
     sliderInput(
       inputId = "binss",
@@ -40,7 +45,7 @@ ui <- page_sidebar(
       max = 50,
       value = 30
     ),
-
+),
     selectInput(
       inputId="input_2",
       label="Plot type to visualize:",
@@ -50,10 +55,15 @@ ui <- page_sidebar(
       selectize = TRUE,
       width = NULL,
       size = NULL
-    )
-    
+      )
+    ),
 
-    
-  ),
-  plotOutput(outputId = "distPlot")
+ 
+ mainPanel(
+  card( 
+  plotOutput(outputId = "distPlot"),
+  plotOutput(outputId = "distHeight")
+  )
+)
+
 )
