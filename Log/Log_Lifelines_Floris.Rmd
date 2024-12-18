@@ -30,9 +30,9 @@ library(tidyverse)
 
 ```{r}
 # Without factors (test)
-lifelines <- read.csv(file = "/home/floris/Documents/Data_set/Lifelines/2024/Dataset/Lifelines Public Health dataset - 2024.csv", header = TRUE)
+lifelines <- read.csv(file = "/home/floris/Documenten/Data_set/Lifelines/2024/Dataset/Lifelines Public Health dataset - 2024.csv", header = TRUE)
 
-lifelines_df <- read.csv(file = "/home/floris/Documents/Data_set/Lifelines/2024/Dataset/Lifelines Public Health dataset - 2024.csv", header = TRUE)
+lifelines_df <- read.csv(file = "/home/floris/Documenten/Data_set/Lifelines/2024/Dataset/Lifelines Public Health dataset - 2024.csv", header = TRUE)
 
 ```
 
@@ -112,7 +112,7 @@ ggplot(data = lifelines_df, mapping = aes(y = HEIGHT_T1)) +
   xlab("") +
   ylab("Height") +
   facet_wrap(~GENDER) +
-  ggtitle("Height distribution")
+  ggtitle("Height distribution") +
   theme_minimal()
 
 
@@ -128,19 +128,19 @@ ggplot(data = lifelines_df, mapping = aes(y = HEIGHT_T1)) +
 21-11-2024:
 
 Using facet_wrap, the differences in weight distribution is displayed in de following plot.
-Even though the mean weight for the females is lower than the one of the males, the spread is highter, this was quantified using ....
+Even though the mean weight for the females is lower than the one of the males, the spread is higher, this was quantified using ....
 
 
 
 
-```{r weight distribution}
+```{r weight-distribution}
 
 ggplot(data = lifelines_df, mapping = aes(y = WEIGHT_T1) ) +
   geom_boxplot(fill = "green", alpha = 0.5) +
   xlab("Count: ") +
   ylab("Weight") +
   ggtitle("Participant weight:") +
-  facet_wrap(~GENDER)
+  facet_wrap(~GENDER) +
   theme_minimal()
 
 
@@ -182,7 +182,7 @@ ggplot(data = lifelines_df, mapping = aes(x = neighborhood_satisfaction, y = FIN
 
 
 ```
-
+todo heatmap!
 The plot above displays the neighborhood satisfaction score for every salary class. 
 There is a clear trend where people who earn more are more satisfied with their neighborhood. 
 
@@ -213,24 +213,45 @@ plot(neighborhood_prediction)
 
 
 ```{r}
+# Removing the NA values from the data that will be used for the logistic regression:
 
-test <- data.frame(hp=seq(min(mtcars$hp), max(mtcars$hp),len=500))
 
 ```
 
 ```{r}
-test2 <- glm(formula = lifelines$SMOKING ~ lifelines_df$EDUCATION_LOWER_T1 + lifelines_df$NEIGHBOURHOOD4_T2, na.action = na.exclude)
+neighborhood <- glm(formula = SMOKING ~ EDUCATION_LOWER_T1, data = lifelines)
 
-test2_p <- predict(neighborhood_prediction)
+predicted <- predict(neighborhood)
 
 summary(neighborhood_prediction)
 
 plot(test2)
 ```
+
+```{r}
+# Fit the glm model using 'na.exclude'
+neighborhood <- glm(formula = SMOKING ~ EDUCATION_LOWER_T1, data = lifelines_df, na.action = na.exclude)
+
+# Get the fitted values and residuals
+fitted_values <- neighborhood$fitted.values
+
+# Identify the rows used in fitting the model
+used_indices <- !is.na(neighborhood$residuals)  # This identifies which rows were actually used
+
+# Subset both fitted values and smoking data to match these indices
+smoking_subset <- lifelines$SMOKING[rownames(lifelines)[used_indices]]
+
+# Now create your dataframe with matching lengths
+new_data <- data.frame(fitted_values, smoking_subset)
+
+# Optionally give the columns meaningful names
+colnames(new_data) <- c("Fitted_SMOKING", "Actual_SMOKING")
+```
+
 ### Statistical tests:
 
 First, to check for a normal distribution, I wanted to use the Shapiro-wilk test on the data. 
-The Shapiro-wilk test can only handle up to 5000 samples and given that this Lifelines dataset contains over 16000, this test can not be used. 
+The Shapiro-wilk test can only handle up to 5000 observations and given that this Lifelines dataset contains over 16000, this test can not be used. 
 Therefore, the anderson-darling test will be used. 
 
 ```{r}
@@ -295,8 +316,126 @@ p <- c(ad_mheight$p.value, ad_fheight$p.value)
 t.test(lifelines_female$HEIGHT_T1, lifelines_male$HEIGHT_T1)
 
 ```
+4-12-2024:
 
+PCA:
+Below is a principal component analysis to visualize the many dimensions in one 2d plane. 
+The following code does not work yet. 
 ```{r}
 
+pr <- princomp(t(lifelines_df))
+
+biplot(pr)
+
+d16 <- dist(t(rnaseq[1:6,3:18]))
+
+image(as.matrix(d16))
+
 ```
+
+```{r}
+test <- lapply(lifelines_df$AGE_T1, FUN = sum(n)
+
+
+plot3d( lifelines_df[,1], lifelines_df[,2], lifelines_df[,3], col = lifelines_df$HEIGHT_T1, type = "s", radius = .2 )
+
+play3d( spin3d( axis = c(0, 0, 1), rpm = 20), duration = 10 )
+
+```
+
+Because of the normally distributed data, the t-test can be used to measure a difference between the two groups. 
+```{r}
+
+height_men <- lifelines_df %>% 
+  filter(GENDER == "Male")
+
+height_women <- lifelines_df %>% 
+ filter(GENDER == "Female")
+
+
+#T-test:
+t.test(x = height_men, y = height_women, alternative = "two.sided")
+
+
+
+```
+
+
+```{r}
+# Differences between:
+# Men and woman:
+
+# Smoking:
+Smoking_MW <- t.test(as.numeric(lifelines_female$SMOKING), as.numeric(lifelines_male$SMOKING))
+
+# Education:
+Education_MW <- t.test(as.numeric(lifelines_female$EDUCATION_LOWER_T1), as.numeric(lifelines_male$EDUCATION_LOWER_T1))
+
+# Height:
+Height_MW <- t.test(as.numeric(lifelines_female$HEIGHT_T1), as.numeric(lifelines_male$HEIGHT_T1))
+
+# Respiratory disease:
+Resp_dis_MW <- t.test(as.numeric(lifelines_female$RESPIRATORY_DISEASE_T1), as.numeric(lifelines_male$RESPIRATORY_DISEASE_T1))
+
+# BMI:
+Bmi_MW <- t.test((lifelines_female$BMI_T1), (lifelines_male$BMI_T1))
+
+# Low QOL:
+qol_MW <- t.test(as.numeric(lifelines_female$LOW_QUALITY_OF_LIFE_T1), as.numeric(lifelines_male$LOW_QUALITY_OF_LIFE_T1))
+
+# Waist size:
+Waist_MW <- t.test(as.numeric(lifelines_female$WAIST_T1), as.numeric(lifelines_male$WAIST_T1))
+
+
+
+
+
+
+```
+
+
+
+```{r}
+wilcox_test_vector_geslacht <- c(Smoking_MW[3],Education_MW[3],Height_MW[3],Resp_dis_MW[3],Bmi_MW[3],qol_MW[3],Waist_MW[3])
+
+df_wilcox_geslacht <- (data.frame((wilcox_test_vector_geslacht)) %>% rename(
+  `Smoking` = p.value,
+  `Education` = p.value.1,
+  `Height` = p.value.2,
+  `Respitoroty dis` = p.value.3,
+  `BMI` = p.value.4,
+  `Quality of life` = p.value.5,
+  `Waist size` = p.value.6
+  ))
+
+df_wilcox_geslacht %>% 
+  pivot_longer(cols = c(1:7)) -> df_wilcox_geslacht
+```
+
+
+
+```{r Visualization of P-values of T-tests}
+
+ggplot(data = df_wilcox_geslacht, mapping = aes(x = name , y = value)) +
+  geom_bar(stat = "identity",, fill = "blue", alpha = 0.5) +
+  geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
+  geom_label_repel(position = position_nudge_repel(y = -0.07),aes(label = round(value,digits = 3)) ) +
+  ylab("P-value:") +
+  xlab(" ") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.6)) 
+  
+
+```
+
+18-12-2024:
+
+
+
+
+
+
+
+
+
 

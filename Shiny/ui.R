@@ -1,3 +1,12 @@
+library(shiny)
+library(shinydashboard)
+library(bslib)
+library(here)
+library(tidyverse)
+library(DT)
+library(plotly)
+
+
 ui <- page_sidebar(
  titlePanel("Lifelines Visualizer:"),
  theme = bs_theme(preset = "flatly"),
@@ -6,60 +15,96 @@ ui <- page_sidebar(
     tabsetPanel(
       tabPanel("Correlations", 
                         tabsetPanel(
-                        tabPanel("tab 1",
-                                   h3("aaaa")
-                                 
+                        tabPanel("Graphs",
+                                   p("..."),
+                                 plotOutput(outputId = "distHeight"),
                                  ),
-                        tabPanel("tab 2",
-                                 h3("bbbb")))
+                        tabPanel("Progression over time",
+                                 # Plot the average change for all the measurements like changes in weight for T1, T2 and T3.
+                                 h3("Plots here....")))
                         
                                   ),
       
       tabPanel("General statistics",
                card(h4("Explore the interactive data table below:"),
-                    p("test")
+                    p("To-do: Add tooltips for options?")
                     
                     ),
                tabsetPanel(
                  tabPanel("Whole dataset",
-                          h3("aaaa"),
+                          p("The dataset in its entirety:"),
+                          
+                          # Use the DT library to show an interactive table:
                           DTOutput("interactive_table1")
                       
                           
                  ),
-                 tabPanel("Filterd dataset",
+                 tabPanel("Stats",
                           p("First, select the parameters you would like to use with the sidepanel on the left."))),
-                          DTOutput("interactive_table1")
-               # Use the DT library to show an interactive table:
-               
+                          # To-do: add filter in server.R
+                         # To-do: add table with general stats like avg. height for men/women etc. 
             
                ),
       
       tabPanel("About",
-               p("To-do: write about the project and interpretation of the data.")
+              # p("To-do: ...."),
+               tabsetPanel(
+               tabPanel("Interpretation",
+                        h3("To-do: write about the project and interpretation of the data.")
+                        
                ),
+               tabPanel("Test:",
+                        h3("To-do: "))
+      
+               ),
+      
+              tabPanel("Origin of the data",
+                h3("To-do: Explain how the data was acquired"))
+     
+               ),
+
           
-    )
+    ),
   ),
 
 
   sidebar = sidebar(
     card(
+      p("What to compare?"),
+    ),
+    card(
     selectInput(
       inputId="comparison_1",
-      label="What to compare?",
-      choices=list(`cat1` = list("Participant", "Province", "CT"),
-           `cat2` = list("aa", "bb", "cc"),
-           `cat3` = list("aa", "aa", "a")),
+      label="Variable one",
+      choices=list(`cat1` = list("Age group", "Province", "Gender", "Smoking status", "Education group"),
+           `Body characteristics` = list("Height group", "Weight group", "other.."),
+           `Socioeconomic status` = list("Income class", "other", "other")),
       selected = NULL,
       multiple = FALSE,
       selectize = TRUE,
       width = NULL,
       size = NULL
-     
+      ),
     ),
-    
-  ),
+    card(
+      selectInput(
+        inputId="comparison_2",
+        label="Variable two",
+        choices=list(`cat1` = list("Age group", "Province", "Gender", "Smoking status", "Education group"),
+           `Body characteristics` = list("Height group", "Weight group", "other.."),
+           `Socioeconomic status` = list("Income class", "other", "other")),
+        selected = NULL,
+        multiple = FALSE,
+        selectize = TRUE,
+        width = NULL,
+        size = NULL
+        
+      ),
+      
+      
+      
+    ),
+ 
 
   card(
     sliderInput(
@@ -70,9 +115,9 @@ ui <- page_sidebar(
       value = 30
     ),
 
-    
+    # To-do: Think of a usecase for a second slider 
     sliderInput(
-      inputId = "binss",
+      inputId = "other option",
       label = "test2:",
       min = 1,
       max = 50,
@@ -80,9 +125,9 @@ ui <- page_sidebar(
     ),
 ),
     selectInput(
-      inputId="input_2",
-      label="Plot type to visualize:",
-      choices=list("Automatic", "Scatter plot", "blablabla"),
+      inputId="facet_wrap_cat",
+      label="Facet_wrap category:",
+      choices=list("Gender", "Age group", "Income class"),
       selected = NULL,
       multiple = FALSE,
       selectize = TRUE,
