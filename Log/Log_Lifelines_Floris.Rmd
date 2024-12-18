@@ -1,9 +1,9 @@
 ---
 title: "Lifelines Datadashboard"
 output:
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 
@@ -23,7 +23,7 @@ The following libraries are used:
 ```{r}
 
 library(tidyverse)
-
+library(stringr)
 ```
 
 
@@ -56,7 +56,7 @@ NEIGHBOURHOOD6_T2 'Feels at home in this neighbourhood (ranging from completely 
 
 The following factors are about socioeonomically determined variables:
 
-```{r Socioeconomical factors}
+```{r Socioeconomical-factors}
 
 lifelines_df$neighborhood_satisfaction <- lifelines_df$NEIGHBOURHOOD1_T2 %>%  factor(levels = c(1:10), labels = c(1:10))
 
@@ -85,7 +85,7 @@ lifelines_df$SMOKING <- lifelines_df$SMOKING %>%  factor(levels = c(0,1), labels
 The following factors are about body "specifications" like age and weight.
 
 
-```{r Personal factors}
+```{r Personal-factors}
 
 
 lifelines_df$GENDER <- lifelines_df$GENDER %>%  factor(levels = c(1:2), labels = c("Male", "Female"))
@@ -101,7 +101,7 @@ lifelines_df$GENDER <- lifelines_df$GENDER %>%  factor(levels = c(1:2), labels =
 ```
 
 The following figure displays the distribution of height:
-```{r density plot age}
+```{r density-plot-age}
 
 # To make the data in the long format:
 #lifelines_long <- lifelines_df %>% pivot_longer(cols = ZIP_CODE)
@@ -158,7 +158,7 @@ ggplot(data = lifelines_df, mapping = aes(y = PREGNANCIES)) +
 ```
 
 
-```{r gender distribution}
+```{r gender-distribution, eval=F}
 ggplot(data = lifelines_df, mapping = aes(y = GENDER) ) +
   geom_bar(fill = "blue", alpha = 0.6) +
   xlab("Count: ") +
@@ -212,13 +212,13 @@ plot(neighborhood_prediction)
 27-11-2024:
 
 
-```{r}
+#```{r}
 # Removing the NA values from the data that will be used for the logistic regression:
 
 
-```
+#```
 
-```{r}
+```{r eval=F}
 neighborhood <- glm(formula = SMOKING ~ EDUCATION_LOWER_T1, data = lifelines)
 
 predicted <- predict(neighborhood)
@@ -228,7 +228,7 @@ summary(neighborhood_prediction)
 plot(test2)
 ```
 
-```{r}
+```{r test1, eval=F}
 # Fit the glm model using 'na.exclude'
 neighborhood <- glm(formula = SMOKING ~ EDUCATION_LOWER_T1, data = lifelines_df, na.action = na.exclude)
 
@@ -254,7 +254,7 @@ First, to check for a normal distribution, I wanted to use the Shapiro-wilk test
 The Shapiro-wilk test can only handle up to 5000 observations and given that this Lifelines dataset contains over 16000, this test can not be used. 
 Therefore, the anderson-darling test will be used. 
 
-```{r}
+```{r, eval=F}
 library(nortest)
 
 normality_height <- ad.test(lifelines_df$HEIGHT_T1)
@@ -279,7 +279,7 @@ plot(test3)
 ```
 28-11-2024:
 
-```{r}
+```{r, eval=F}
 
 lifelines_male <- lifelines_df %>% 
   filter(GENDER == "Male")
@@ -311,7 +311,7 @@ p <- c(ad_mheight$p.value, ad_fheight$p.value)
 
 ```
 
-```{r}
+```{r, eval=F}
 
 t.test(lifelines_female$HEIGHT_T1, lifelines_male$HEIGHT_T1)
 
@@ -321,7 +321,7 @@ t.test(lifelines_female$HEIGHT_T1, lifelines_male$HEIGHT_T1)
 PCA:
 Below is a principal component analysis to visualize the many dimensions in one 2d plane. 
 The following code does not work yet. 
-```{r}
+```{r, eval=F}
 
 pr <- princomp(t(lifelines_df))
 
@@ -333,7 +333,7 @@ image(as.matrix(d16))
 
 ```
 
-```{r}
+```{r eval=F}
 test <- lapply(lifelines_df$AGE_T1, FUN = sum(n)
 
 
@@ -344,7 +344,7 @@ play3d( spin3d( axis = c(0, 0, 1), rpm = 20), duration = 10 )
 ```
 
 Because of the normally distributed data, the t-test can be used to measure a difference between the two groups. 
-```{r}
+```{r eval=F}
 
 height_men <- lifelines_df %>% 
   filter(GENDER == "Male")
@@ -361,7 +361,7 @@ t.test(x = height_men, y = height_women, alternative = "two.sided")
 ```
 
 
-```{r}
+```{r eval=F}
 # Differences between:
 # Men and woman:
 
@@ -395,7 +395,7 @@ Waist_MW <- t.test(as.numeric(lifelines_female$WAIST_T1), as.numeric(lifelines_m
 
 
 
-```{r}
+```{r eval=F}
 wilcox_test_vector_geslacht <- c(Smoking_MW[3],Education_MW[3],Height_MW[3],Resp_dis_MW[3],Bmi_MW[3],qol_MW[3],Waist_MW[3])
 
 df_wilcox_geslacht <- (data.frame((wilcox_test_vector_geslacht)) %>% rename(
@@ -414,7 +414,7 @@ df_wilcox_geslacht %>%
 
 
 
-```{r Visualization of P-values of T-tests}
+```{r Visualization-of-P-values-of-T-tests, eval=F}
 
 ggplot(data = df_wilcox_geslacht, mapping = aes(x = name , y = value)) +
   geom_bar(stat = "identity",, fill = "blue", alpha = 0.5) +
