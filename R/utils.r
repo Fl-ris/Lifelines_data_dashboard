@@ -1,14 +1,16 @@
 #' Import the dataset to be used.
 #' @param dataset_path, Provide the path to the Lifelines dataset. description.
 #' @return A dataframe with the provided dataset.
+#' @export
 load_dataset <- function(dataset_path) {
     lifelines_df <- read.csv(file = dataset_path, header = TRUE)
 }
 
 #' Start the GUI
+#' @export
 run_datadasboard <- function() {
     here::here()
-
+    # To-do: maybe remove the load_dataset function and add a dataset path parameter to the run_datadashboard function.
 
     # Source the UI object from the following file:
     source(file = here("R", "ui.R"))
