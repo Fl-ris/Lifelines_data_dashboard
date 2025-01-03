@@ -10,7 +10,7 @@ finance_neighborhood_cor(dataset)
 \item{dataset, }{name of the dataset description}
 }
 \value{
-Jitter graph.
+Returns a jitter graph.
 }
 \description{
 Plot the correlation between montly income and the satisfaction score.
