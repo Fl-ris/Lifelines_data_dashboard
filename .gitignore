@@ -50,3 +50,7 @@ rsconnect/
 
 # Data dir:
 Data/
+.Rproj.user
+.Rdata
+.DS_Store
+.quarto

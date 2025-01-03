@@ -245,6 +245,8 @@ normality_height
 
 
 ```
+
+
 ```{r}
 
 test3 <- glm(formula = lifelines$RESPIRATORY_DISEASE_T1 ~ lifelines_df$SMOKING + lifelines_df$LOW_QUALITY_OF_LIFE_T1, na.action = na.exclude)
@@ -411,6 +413,9 @@ ggplot(data = df_wilcox_geslacht, mapping = aes(x = name , y = value)) +
 ```
 
 
+
+3-01-2025:
+The next step is to make a package from the project to make it easy to install via install_github().
 
 
 
