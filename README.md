@@ -3,10 +3,16 @@
 
 # LifelinesDataDashboard
 
+> Date: 5-01-2025
+
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of LifelinesDataDashboard is to …
+The goal of the package LifelinesDataDashboard is to visualize the
+Lifelines dataset and to show the significance of correlations between
+gender, age, income and many more. This dashboard has interactive
+functionality to make visualizations based on filters of you own
+choosing, like age and gender.
 
 ## Installation
 
@@ -14,39 +20,71 @@ You can install the development version of LifelinesDataDashboard from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("pak")
+# First install het pak library:
+install.packages("pak")
+
+# Then, use pak to install the package from github:
 pak::pak("Fl-ris/Lifelines_data_dashboard")
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+The code snippets below demonstrate some of the functionality of the
+LifelinesDataDashboard package.
+
+First, load the library.
 
 ``` r
 library(LifelinesDataDashboard)
-## basic example code
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+After that, load the dataset with the function: `run_datadashboard()`
+and give the path the the dataset as shown in the following example:
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+
+#run_datadashboard(here("Data", "Lifelines Public Health dataset - 2024.csv"))
+
+load_dataset(here("Data", "Lifelines Public Health dataset - 2024.csv"))
 ```
+
+The plotting functions can also be called upon without the shiny
+interface:
+
+``` r
+
+gender_dist(dataset = lifelines_df)
+```
+
+<img src="man/figures/README-Gender_distribution_paticipants-1.png" width="100%" />
 
 You’ll still need to render `README.Rmd` regularly, to keep `README.md`
 up-to-date. `devtools::build_readme()` is handy for this.
 
 You can also embed plots, for example:
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+``` r
+weight_dist(dataset = lifelines_df)
+```
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+<img src="man/figures/README-Participant-weight-distribution-1.png" width="100%" />
+
+``` r
+finance_neighborhood_cor(dataset = lifelines_df)
+```
+
+<img src="man/figures/README-Wealth_and_satisfaction_correlation-1.png" width="100%" />
+
+**Dependencies:**  
+Dependencies for the LifelinesDataDashboard library:  
+- R (\>= 3.5.0)  
+- pak  
+- Other libraries will be automatically installed with
+‘pak(“Fl-ris/Lifelines_data_dashboard”)’  
+
+Dependencies for the Notebook with my analysis:  
+- R  
+- tidyverse  
+- stringr  
+
+**Author:** F.J.A. Menninga, github name: fl-ris
