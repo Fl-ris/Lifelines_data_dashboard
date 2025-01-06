@@ -10,10 +10,10 @@ library(plotly)
 ui <- page_sidebar(
     titlePanel("Lifelines Visualizer:"),
     theme = bs_theme(preset = "flatly"),
-    
+
     mainPanel(
         tabsetPanel(
-            tabPanel("Correlations", 
+            tabPanel("Correlations",
                      tabsetPanel(
                          tabPanel("Graphs",
                                   p("..."),
@@ -22,52 +22,52 @@ ui <- page_sidebar(
                          tabPanel("Progression over time",
                                   # Plot the average change for all the measurements like changes in weight for T1, T2 and T3.
                                   h3("Plots here....")))
-                     
+
             ),
-            
+
             tabPanel("General statistics",
                      card(h4("Explore the interactive data table below:"),
                           p("To-do: Add tooltips for options?")
-                          
+
                      ),
                      tabsetPanel(
                          tabPanel("Whole dataset",
                                   p("The dataset in its entirety:"),
-                                  
+
                                   # Use the DT library to show an interactive table:
                                   DTOutput("interactive_table1")
-                                  
-                                  
+
+
                          ),
                          tabPanel("Stats",
                                   p("First, select the parameters you would like to use with the sidepanel on the left."))),
                      # To-do: add filter in server.R
-                     # To-do: add table with general stats like avg. height for men/women etc. 
-                     
+                     # To-do: add table with general stats like avg. height for men/women etc.
+
             ),
-            
+
             tabPanel("About",
                      # p("To-do: ...."),
                      tabsetPanel(
                          tabPanel("Interpretation",
                                   h3("To-do: write about the project and interpretation of the data.")
-                                  
+
                          ),
                          tabPanel("Test:",
                                   h3("To-do: "))
-                         
+
                      ),
-                     
+
                      tabPanel("Origin of the data",
                               h3("To-do: Explain how the data was acquired"))
-                     
+
             ),
-            
-            
+
+
         ),
     ),
-    
-    
+
+
     sidebar = sidebar(
         card(
             p("What to compare?"),
@@ -98,14 +98,14 @@ ui <- page_sidebar(
                 selectize = TRUE,
                 width = NULL,
                 size = NULL
-                
+
             ),
-            
-            
-            
+
+
+
         ),
-        
-        
+
+
         card(
             sliderInput(
                 inputId = "bins",
@@ -114,8 +114,8 @@ ui <- page_sidebar(
                 max = 50,
                 value = 30
             ),
-            
-            # To-do: Think of a usecase for a second slider 
+
+            # To-do: Think of a usecase for a second slider
             sliderInput(
                 inputId = "other option",
                 label = "test2:",
@@ -135,19 +135,19 @@ ui <- page_sidebar(
             size = NULL
         )
     ),
-    
-    
+
+
     # mainPanel(
-    #  card( 
+    #  card(
     #  plotOutput(outputId = "distPlot"),
     #  plotOutput(outputId = "distHeight"),
     #  plotOutput(outputId = "wealth_cor"),
-    #  textOutput(outputId = "comparison_1"),
-    
-    
-    
+     textOutput(outputId = "data_loaded"),
+
+
+
     #  )
     #)
-    
-    
+
+
 )

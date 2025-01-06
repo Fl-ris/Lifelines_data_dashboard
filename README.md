@@ -58,11 +58,6 @@ gender_dist(dataset = lifelines_df)
 
 <img src="man/figures/README-Gender_distribution_paticipants-1.png" width="100%" />
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
 ``` r
 weight_dist(dataset = lifelines_df)
 ```
