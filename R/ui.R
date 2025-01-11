@@ -18,7 +18,10 @@ ui <- page_sidebar(
                      tabsetPanel(
                          tabPanel("Graphs",
                                   p("..."),
-                                  plotOutput(outputId = "distHeight"),
+                                  #plotOutput(outputId = "distHeight"),
+                               #   print(output$comparison_table)
+
+                               plotOutput("comparison_plot")
                          ),
                          tabPanel("Progression over time",
                                   # Plot the average change for all the measurements like changes in weight for T1, T2 and T3.
@@ -41,7 +44,9 @@ ui <- page_sidebar(
 
                          ),
                          tabPanel("Stats",
+
                                   p("First, select the parameters you would like to use with the sidepanel on the left."))),
+
                      # To-do: add filter in server.R
                      # To-do: add table with general stats like avg. height for men/women etc.
 
@@ -76,7 +81,7 @@ ui <- page_sidebar(
 
 
         ),
-        card(
+       # card(
             selectInput(
                 inputId="comparison_1",
                 label="Variable one",
@@ -88,9 +93,9 @@ ui <- page_sidebar(
                 selectize = TRUE,
                 width = NULL,
                 size = NULL
-            ),
+          #  ),
         ),
-        card(
+      #  card(
             selectInput(
                 inputId="comparison_2",
                 label="Variable two",
@@ -103,7 +108,7 @@ ui <- page_sidebar(
                 width = NULL,
                 size = NULL
 
-            ),
+          #  ),
 
 
 
@@ -112,11 +117,11 @@ ui <- page_sidebar(
 
         card(
             sliderInput(
-                inputId = "bins",
-                label = "Number of bins:",
-                min = 1,
-                max = 50,
-                value = 30
+                inputId = "age_slider",
+                label = "Filter participant age:",
+                min = min(lifelines_df$AGE_T1),
+                max = max(lifelines_df$AGE_T1),
+                value = c(min(lifelines_df$AGE_T1), max(lifelines_df$AGE_T1))
             ),
 
             # To-do: Think of a usecase for a second slider
@@ -148,7 +153,8 @@ ui <- page_sidebar(
     #  plotOutput(outputId = "distPlot"),
     #  plotOutput(outputId = "distHeight"),
     #  plotOutput(outputId = "wealth_cor"),
-     textOutput(outputId = "data_loaded"),
+     textOutput(outputId = "comparison_1"),
+
 
 
 

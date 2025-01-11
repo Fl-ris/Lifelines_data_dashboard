@@ -151,7 +151,7 @@ make_factors_df <- function(dataframe) {
 }
 
 
-#' Plot the correlation between montly income and the satisfaction score.
+#' Plot the correlation between monthly income and the satisfaction score.
 #' @param dataset, name of the dataset description
 #' @return Returns a jitter graph.
 finance_neighborhood_cor <- function(dataset) {
@@ -205,4 +205,25 @@ weight_dist <- function(dataset) {
         theme_minimal()
 }
 
+
+# To-do: write doctrings for all functions below:
+
+compare_age <- function(dataset, given_age) {
+
+    cohens_d <- abs(mean(dataset) - given_age) / sd(dataset)
+
+    # Interpret the difference
+    interpretation <- case_when(
+        cohens_d < 0.2 ~ "negligible difference",
+        cohens_d < 0.5 ~ "small difference",
+        cohens_d < 0.8 ~ "medium difference",
+        TRUE ~ "large difference"
+    )
+
+    cat("Given age:", given_age, "\n")
+    cat("Dataset mean:", mean(dataset), "\n")
+    cat("Dataset SD:", sd(dataset), "\n")
+    cat("Cohen's d:", round(cohens_d, 3), "\n")
+    cat("Interpretation:", interpretation, "\n")
+}
 

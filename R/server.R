@@ -3,40 +3,22 @@
 source(file = here("R", "utils.r"))
 
 server <- function(input, output) {
-    # To-do: Change this to allow the user to load their own data...
-  #  if (exists("data_loaded") == FALSE) {
-        # Try to load the local dataset.
-   #  output$data_loaded <- renderText({
-   #        paste("You forgot to load the Lifelines dataset. Use the load_data() function to import it.:")})
-
-        # lifelines_df <- load_dataset(here("Data", "Lifelines Public Health dataset - 2024.csv"))
-#  }
-
 
 
     # To-do: Turn this into a function and place into the utils.r file.
     # Subset of the dataframe depending on the user's input selection.
     dynamic_dataframe <- reactive({
-        # df <- data.frame()
-
-        comparison_var_1 <- input$comparison_1
-        comparison_var_2 <- input$comparison_1
-
+        req(input$comparison_1, input$comparison_2)  # Ensure inputs exist
 
         df <- lifelines_df %>%
-            # To-do: Change this into somethings useful....
-            subset(x = lifelines_df,
-                   subset = c(comparison_var_1, comparison_var_2))
+            filter(AGE_T1 >= input$age_slider[1] & AGE_T1 <= input$age_slider[2]) %>%
+            select(all_of(c(input$comparison_1, input$comparison_2)))  # Select only the chosen columns
 
-        output$comparison_df_filtered <- renderTable({
-            dynamic_dataframe()
-        })
-        #   if ("Age" in in input$comparison_1) {
-        #    df$Age <- lifelines_df$AGE_T1
-        #  }
+        return(df)
+    })
 
-
-
+    output$comparison_table <- renderDataTable({
+        dynamic_dataframe()
     })
 
     # Interactive plot with a variable amount of bins.
@@ -55,7 +37,7 @@ server <- function(input, output) {
 
     })
     output$distHeight <- renderPlot({
-        ages <- lifelines_df$HEIGHT_T1
+        ages <- df$HEIGHT_T1
         hist(
             ages,
             col = "#807fc3",

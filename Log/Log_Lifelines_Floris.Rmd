@@ -422,9 +422,121 @@ ggplot(data = df_wilcox_geslacht, mapping = aes(x = name , y = value)) +
 The next step is to make a package from the project to make it easy to install via install_github().
 
 
+11-01-2025:
+
+```{r, violin_plot_neighborhood_sat}
+library(forcats)
+library(hrbrthemes)
+library(viridis)
+
+violin_df <- na.omit(lifelines_df)
+
+
+ggplot(data = violin_df, aes(x= AGE_T1, y= LOW_QUALITY_OF_LIFE_T1, fill=LOW_QUALITY_OF_LIFE_T1)) +
+    geom_violin(width=2.1, size=0.2) +
+    scale_fill_viridis(discrete=TRUE) +
+    scale_color_viridis(discrete=TRUE) +
+    facet_wrap(~violin_df$EDUCATION_LOWER_T1) +
+    xlab("") +
+    ylab("Choice:") +
+    theme_minimal()
+```
+As seen in the graph above, there is a steep cut-off after 50 years for the "false" category.
 
 
 
+animation test:
+```{r}
 
+
+# libraries:
+library(ggplot2)
+library(gganimate)
+ 
+# Make 2 basic states and concatenate them:
+a <- data.frame(group=c("A","B","C"), values=c(3,2,4), frame=rep('a',3))
+b <- data.frame(group=c("A","B","C"), values=c(5,3,7), frame=rep('b',3))
+data <- rbind(a,b)  
+ 
+# Basic barplot:
+ggplot(a, aes(x=group, y=values, fill=group)) + 
+  geom_bar(stat='identity')
+ 
+# Make a ggplot, but add frame=year: one image per year
+ggplot(data, aes(x=group, y=values, fill=group)) + 
+  geom_bar(stat='identity') +
+  theme_bw() +
+  # gganimate specific bits:
+  transition_states(
+    frame,
+    transition_length = 2,
+    state_length = 1
+  ) +
+  ease_aes('sine-in-out')
+
+# Save at gif:
+anim_save("288-animated-barplot-transition.gif")
+
+
+```
+
+
+Statistics: calculate if a given value is significantly different from the others.
+```{r}
+
+t.test(lifelines_df$AGE_T1, mu = , alternative = "two.sided")
+
+```
+
+The t.test above shows that when the dataset consists of this many datapoints, almost any age is "significally" different compared to the mean which has an confidence interfal of 46.45218 46.79135, almost the same number. 
+
+That's why I will use the power and effect size. 
+
+```{r}
+
+cohens_d <- function(x, mu) {
+    abs(mean(x) - mu) / sd(x)
+}
+```
+
+
+
+```{r}
+compare_age <- function(dataset, given_age) {
+    cohens_d <- abs(mean(dataset) - given_age) / sd(dataset)
+    
+    # Interpret the difference
+    interpretation <- case_when(
+        cohens_d < 0.2 ~ "negligible difference",
+        cohens_d < 0.5 ~ "small difference",
+        cohens_d < 0.8 ~ "medium difference",
+        TRUE ~ "large difference"
+    )
+    
+    cat("Given age:", given_age, "\n")
+    cat("Dataset mean:", mean(dataset), "\n")
+    cat("Dataset SD:", sd(dataset), "\n")
+    cat("Cohen's d:", round(cohens_d, 3), "\n")
+    cat("Interpretation:", interpretation, "\n")
+}
+
+compare_age(lifelines_df$AGE_T1, given_age = 25)
+```
+
+```{r}
+
+one_sd_less <- mean(lifelines_df$AGE_T1) - sd(lifelines_df$AGE_T1) 
+mean_value <- mean(lifelines_df$AGE_T1)  
+one_sd_more <- mean(lifelines_df$AGE_T1) + sd(lifelines_df$AGE_T1)
+
+
+ggplot(data = lifelines_df, aes(x = AGE_T1)) +
+  geom_density() +
+  geom_vline(xintercept = c(mean_value, one_sd_less, one_sd_more),
+             color = c("green", "blue", "red")) +
+  annotate("text", x = c(mean_value, one_sd_less, one_sd_more),
+           y = 0.05, label = c("mean_value", "one_sd_less", "one_sd_more"),
+           color = c("green", "blue", "red"))
+```
 
 
