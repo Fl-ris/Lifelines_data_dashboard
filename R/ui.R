@@ -11,6 +11,7 @@ ui <- page_sidebar(
     titlePanel("Lifelines Visualizer:"),
     theme = bs_theme(preset = "flatly"),
 
+
     mainPanel(
         tabsetPanel(
             tabPanel("Correlations",
@@ -69,8 +70,11 @@ ui <- page_sidebar(
 
 
     sidebar = sidebar(
+
         card(
             p("What to compare?"),
+
+
         ),
         card(
             selectInput(
@@ -133,7 +137,9 @@ ui <- page_sidebar(
             selectize = TRUE,
             width = NULL,
             size = NULL
-        )
+        ),
+        nav_item(
+            input_dark_mode(id = "dark_mode", mode = "light")),
     ),
 
 
@@ -148,6 +154,5 @@ ui <- page_sidebar(
 
     #  )
     #)
-
 
 )

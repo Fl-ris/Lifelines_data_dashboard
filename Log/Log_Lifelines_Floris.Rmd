@@ -2,7 +2,11 @@
 title: "Lifelines Datadashboard"
 output:
   html_document:
+    toc: true
+    toc_depth: '3'
+    number_sections: true
     df_print: paged
+    
   pdf_document: default
 ---
 
