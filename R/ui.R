@@ -21,7 +21,7 @@ ui <- page_sidebar(
                                   #plotOutput(outputId = "distHeight"),
                                #   print(output$comparison_table)
 
-                               plotOutput("comparison_plot")
+                           #    plotOutput("comparison_plot")
                          ),
                          tabPanel("Progression over time",
                                   # Plot the average change for all the measurements like changes in weight for T1, T2 and T3.
@@ -116,23 +116,33 @@ ui <- page_sidebar(
 
 
         card(
+            p("Filter the displayed data using the following parameters:"),
             sliderInput(
                 inputId = "age_slider",
-                label = "Filter participant age:",
+                label = "Participant age:",
                 min = min(lifelines_df$AGE_T1),
                 max = max(lifelines_df$AGE_T1),
                 value = c(min(lifelines_df$AGE_T1), max(lifelines_df$AGE_T1))
             ),
 
-            # To-do: Think of a usecase for a second slider
             sliderInput(
-                inputId = "other option",
-                label = "test2:",
-                min = 1,
-                max = 50,
-                value = 30
+                inputId = "height_slider",
+                label = "Participant height: (cm)",
+                min = min(lifelines_df$HEIGHT_T1),
+                max = max(lifelines_df$HEIGHT_T1),
+                value = c(min(lifelines_df$HEIGHT_T1), max(lifelines_df$HEIGHT_T1))
             ),
+
+            sliderInput(
+                inputId = "weight_slider",
+                label = "Participant weight: (kg)",
+                min = min(lifelines_df$WEIGHT_T1),
+                max = max(lifelines_df$WEIGHT_T1),
+                value = c(min(lifelines_df$WEIGHT_T1), max(lifelines_df$WEIGHT_T1))
+            ),
+
         ),
+
         selectInput(
             inputId="facet_wrap_cat",
             label="Facet_wrap category:",
@@ -150,10 +160,11 @@ ui <- page_sidebar(
 
     # mainPanel(
     #  card(
-    #  plotOutput(outputId = "distPlot"),
+     plotOutput(outputId = "weight_dist"),
     #  plotOutput(outputId = "distHeight"),
-    #  plotOutput(outputId = "wealth_cor"),
-     textOutput(outputId = "comparison_1"),
+    #plotOutput(outputId = "wealth_cor"),
+
+   # textOutput(outputId = "selected_values"),
 
 
 

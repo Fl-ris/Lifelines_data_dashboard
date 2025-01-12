@@ -19,6 +19,16 @@ load_dataset <- function(dataset_path) {
     # return(lifelines_df)
 }
 
+# Test:
+filter_df <- function(df, column, keep_columns, values) {
+    df <- df %>%
+        if(is.null(column)) {
+            select(column) } %>%
+            filter(column > values)
+
+
+}
+
 #' Start the GUI
 #' @param dataset_path, Provide the path to the Lifelines dataset. description.
 #' @return A dataframe with the provided dataset.
@@ -171,6 +181,7 @@ finance_neighborhood_cor <- function(dataset) {
 #' @param dataset, name of the dataset description
 #' @return Returns a bar graph.
 gender_dist <- function(dataset) {
+
     ggplot(data = dataset, mapping = aes(y = GENDER)) +
         geom_bar(fill = "blue", alpha = 0.6) +
         xlab("Count: ") +
@@ -196,6 +207,9 @@ pregnancies_amount <- function(dataset) {
 #' @param dataset, name of the dataset description
 #' @return Returns a boxplot.
 weight_dist <- function(dataset) {
+
+
+
     ggplot(data = dataset, mapping = aes(y = WEIGHT_T1)) +
         geom_boxplot(fill = "green", alpha = 0.5) +
         xlab("Count: ") +

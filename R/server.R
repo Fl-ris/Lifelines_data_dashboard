@@ -2,17 +2,16 @@
 
 source(file = here("R", "utils.r"))
 
-server <- function(input, output) {
+server <- function(input, output, session) {
 
 
     # To-do: Turn this into a function and place into the utils.r file.
     # Subset of the dataframe depending on the user's input selection.
     dynamic_dataframe <- reactive({
-        req(input$comparison_1, input$comparison_2)  # Ensure inputs exist
+      #  req(input$comparison_1, input$comparison_2)  # Ensure inputs exist
 
         df <- lifelines_df %>%
-            filter(AGE_T1 >= input$age_slider[1] & AGE_T1 <= input$age_slider[2]) %>%
-            select(all_of(c(input$comparison_1, input$comparison_2)))  # Select only the chosen columns
+            filter(AGE_T1 >= input$age_slider[1] & AGE_T1 <= input$age_slider[2])
 
         return(df)
     })
@@ -22,9 +21,20 @@ server <- function(input, output) {
     })
 
     # Interactive plot with a variable amount of bins.
+
+    output$weight_dist <- renderPlot({
+        df <- dynamic_dataframe()
+        weight_dist(df)
+    })
+
     output$distPlot <- renderPlot({
-        x    <- lifelines_df$BIRTHYEAR
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        df <- dynamic_dataframe()
+        x    <- df$BIRTHYEAR
+
+        bins <- seq(min(x), max(x), length.out = input$slider_2 + 1)
+
+        lower <- input$age_slider[1]
+        upper <- input$age_slider[2]
 
         hist(
             x,
@@ -36,6 +46,7 @@ server <- function(input, output) {
         )
 
     })
+
     output$distHeight <- renderPlot({
         ages <- df$HEIGHT_T1
         hist(
@@ -50,6 +61,7 @@ server <- function(input, output) {
     })
 
     output$wealth_cor <- renderPlot({
+      #  df <<-
         finance_neighborhood_cor(lifelines_df)
 
 
@@ -59,6 +71,11 @@ server <- function(input, output) {
         paste("selected:", input$comparison_1)
     })
 
+
     output$interactive_table1 <- renderDataTable(lifelines_df)
 
-}
+    output$selected_values <- renderPrint({
+        lower <- input$age_slider[1]
+        upper <- input$age_slider[2]
+        paste("Lower value:", lower, "\nUpper value:", upper)
+    })}
