@@ -5,7 +5,7 @@ library(here)
 library(tidyverse)
 library(DT)
 library(plotly)
-
+library(shinyWidgets)
 
 ui <- page_sidebar(
     titlePanel("Lifelines Visualizer:"),
@@ -17,11 +17,9 @@ ui <- page_sidebar(
             tabPanel("Correlations",
                      tabsetPanel(
                          tabPanel("Graphs",
-                                  p("..."),
-                                  #plotOutput(outputId = "distHeight"),
-                               #   print(output$comparison_table)
+                                  textOutput("data_points"),
+                               plotOutput(outputId = "comparison_graph"),
 
-                           #    plotOutput("comparison_plot")
                          ),
                          tabPanel("Progression over time",
                                   # Plot the average change for all the measurements like changes in weight for T1, T2 and T3.
@@ -85,9 +83,10 @@ ui <- page_sidebar(
             selectInput(
                 inputId="comparison_1",
                 label="Variable one",
-                choices=list(`cat1` = list("Age group", "Province", "Gender", "Smoking status", "Education group"),
+                choices=list(`cat1` = list("AGE_T1", "GENDER", "Count", "Smoking status", "Education group"),
                              `Body characteristics` = list("Height group", "Weight group", "other.."),
-                             `Socioeconomic status` = list("Income class", "other", "other")),
+                             `Socioeconomic status` = list("Income class", "other", "other"),
+                             `Medical stats:` = list("DBP_T1", "SBP_T1")),
                 selected = NULL,
                 multiple = FALSE,
                 selectize = TRUE,
@@ -99,9 +98,10 @@ ui <- page_sidebar(
             selectInput(
                 inputId="comparison_2",
                 label="Variable two",
-                choices=list(`cat1` = list("Age group", "Province", "Gender", "Smoking status", "Education group"),
-                             `Body characteristics` = list("Height group", "Weight group", "other.."),
-                             `Socioeconomic status` = list("Income class", "other", "other")),
+                choices=list(`Count:` = list("Count"),
+                             `Body measurements:` = list("GENDER", "AGE_T1", "HEIGHT_T1", "WEIGHT_T1", "BMI_T1", "WAIST_T1", "", "" ),
+                             `Socioeconomic status` = list("FINANCE_T1", "EDUCATION_LOWER_T1", "LOW_QUALITY_OF_LIFE_T1", ""),
+                             `Medical stats:` = list("DBP_T1", "SBP_T1", "HBF_T1", "CHO_T1", "GLU_T1")),
                 selected = NULL,
                 multiple = FALSE,
                 selectize = TRUE,
@@ -117,6 +117,15 @@ ui <- page_sidebar(
 
         card(
             p("Filter the displayed data using the following parameters:"),
+
+            selectInput(
+                "gender_selector",
+                "Participant gender:",
+                list("Men" = "1A", "Women" = "1B"),
+                multiple = TRUE
+            ),
+
+
             sliderInput(
                 inputId = "age_slider",
                 label = "Participant age:",
@@ -141,6 +150,23 @@ ui <- page_sidebar(
                 value = c(min(lifelines_df$WEIGHT_T1), max(lifelines_df$WEIGHT_T1))
             ),
 
+
+            sliderTextInput(
+                inputId = "salary_slider",
+                label = "Monthly salary (Eur):",
+                choices = c("I do not know", "I don't want to answer", "Less than 750", "750 - 1000", "1000 - 1500", "1500 - 2000", "2000 - 2500", "2500 - 3000", "3000 - 3500", "More than 3500"),
+                selected = c("I do not know", "More than 3500")
+
+            ),
+            checkboxGroupInput(
+                "education_checkbox",
+                "Level of education ",
+                c(
+                    "Lower education" = "a",
+                    "Higher educated" = "b"
+                ),selected = c("a","b")
+            ),
+
         ),
 
         selectInput(
@@ -160,7 +186,7 @@ ui <- page_sidebar(
 
     # mainPanel(
     #  card(
-     plotOutput(outputId = "weight_dist"),
+
     #  plotOutput(outputId = "distHeight"),
     #plotOutput(outputId = "wealth_cor"),
 

@@ -11,20 +11,37 @@ server <- function(input, output, session) {
       #  req(input$comparison_1, input$comparison_2)  # Ensure inputs exist
 
         df <- lifelines_df %>%
-            filter(AGE_T1 >= input$age_slider[1] & AGE_T1 <= input$age_slider[2])
+            filter(AGE_T1 >= input$age_slider[1] & AGE_T1 <= input$age_slider[2],
+                   HEIGHT_T1 >= input$height_slider[1] & HEIGHT_T1 <= input$height_slider[2],
+                   WEIGHT_T1 >= input$weight_slider[1] & WEIGHT_T1 <= input$weight_slider[2],
+                   (FINANCE_T1 %in% input$salary_slider))
 
         return(df)
     })
 
-    output$comparison_table <- renderDataTable({
-        dynamic_dataframe()
-    })
-
-    # Interactive plot with a variable amount of bins.
+ #   output$comparison_table <- renderDataTable({
+    #    dynamic_dataframe()
+  #  })
 
     output$weight_dist <- renderPlot({
         df <- dynamic_dataframe()
         weight_dist(df)
+    })
+
+    output$comparison_graph <- renderPlot({
+        df <- dynamic_dataframe()
+      x_comp <- input$comparison_1
+      y_comp <- input$comparison_2
+
+    if ("Count" %in% input$comparison_1) {
+        count_var <- TRUE
+    } else {
+        count_var <- FALSE
+    }
+
+      comparison_graph(df, x_comp, y_comp, count_var )
+
+
     })
 
     output$distPlot <- renderPlot({
@@ -66,11 +83,17 @@ server <- function(input, output, session) {
 
 
     })
-    # Test using input/output.
-    output$comparison_1 <- renderText({
-        paste("selected:", input$comparison_1)
+
+
+    output$data_points <- renderText({
+        df <- dynamic_dataframe()
+        paste("Amount of datapoints used with these filters:", length(df$GENDER))
     })
 
+#    output$testtt <- renderText({
+#        df <- dynamic_dataframe()
+#        paste("Input", input$comparison_1)
+#    })
 
     output$interactive_table1 <- renderDataTable(lifelines_df)
 

@@ -22,9 +22,10 @@ load_dataset <- function(dataset_path) {
 # Test:
 filter_df <- function(df, column, keep_columns, values) {
     df <- df %>%
-        if(is.null(column)) {
-            select(column) } %>%
-            filter(column > values)
+        if (is.null(column)) {
+            select(column)
+        } %>%
+        filter(column > values)
 
 
 }
@@ -181,7 +182,6 @@ finance_neighborhood_cor <- function(dataset) {
 #' @param dataset, name of the dataset description
 #' @return Returns a bar graph.
 gender_dist <- function(dataset) {
-
     ggplot(data = dataset, mapping = aes(y = GENDER)) +
         geom_bar(fill = "blue", alpha = 0.6) +
         xlab("Count: ") +
@@ -205,9 +205,11 @@ pregnancies_amount <- function(dataset) {
 
 #' Plot the weight distribution for all the people.
 #' @param dataset, name of the dataset description
+#' @param x_comp, the variable that should be put on the x-axis.
+#' @param y_comp, the variable that should be put on the y-axis.
 #' @return Returns a boxplot.
-weight_dist <- function(dataset) {
-
+weight_dist <- function(dataset, x_comp, y_comp) {
+    #   x_axis <-
 
 
     ggplot(data = dataset, mapping = aes(y = WEIGHT_T1)) +
@@ -215,15 +217,43 @@ weight_dist <- function(dataset) {
         xlab("Count: ") +
         ylab("Weight") +
         ggtitle("Participant weight:") +
-        facet_wrap( ~ GENDER) +
+        facet_wrap(~ GENDER) +
         theme_minimal()
 }
 
+#' Plot the weight distribution for all the people.
+#' @param dataset, name of the dataset description
+#' @param x_comp, the variable that should be put on the x-axis.
+#' @param y_comp, the variable that should be put on the y-axis.
+#' @return Returns a boxplot.
+comparison_graph <- function(dataset, x_comp, y_comp, count_var) {
 
-# To-do: write doctrings for all functions below:
+    if (count_var) { # If the user wanted to only display the amount of occurrences for one of the variables:
+        ggplot(data = dataset, mapping = aes(y = .data[[y_comp]])) + # The .data is needed to use a string for the columnname.
+            geom_boxplot(fill = "green", alpha = 0.5) +
+            xlab(x_comp) +
+            ylab(y_comp) +
+            ggtitle("test") +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+
+    } else { # If the user wanted to compare two variables to each other:
+        ggplot(data = dataset, mapping = aes(y = .data[[x_comp]], x = .data[[y_comp]])) +
+            geom_boxplot(fill = "green", alpha = 0.5) +
+            xlab("Count: ") +
+            ylab("Weight") +
+            ggtitle("test") +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+
+    }
+
+
+}
+
+# To-do: write docstrings for all functions below:
 
 compare_age <- function(dataset, given_age) {
-
     cohens_d <- abs(mean(dataset) - given_age) / sd(dataset)
 
     # Interpret the difference
@@ -240,4 +270,3 @@ compare_age <- function(dataset, given_age) {
     cat("Cohen's d:", round(cohens_d, 3), "\n")
     cat("Interpretation:", interpretation, "\n")
 }
-
