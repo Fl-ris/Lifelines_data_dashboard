@@ -221,16 +221,16 @@ weight_dist <- function(dataset, x_comp, y_comp) {
         theme_minimal()
 }
 
-#' Plot the weight distribution for all the people.
+#' Plot the the two selected variables.
 #' @param dataset, name of the dataset description
 #' @param x_comp, the variable that should be put on the x-axis.
 #' @param y_comp, the variable that should be put on the y-axis.
-#' @return Returns a boxplot.
-comparison_graph <- function(dataset, x_comp, y_comp, count_var) {
+#' @return Returns a graph.
+comparison_graph <- function(dataset, x_comp, y_comp, count_var, color_theme) {
 
     if (count_var) { # If the user wanted to only display the amount of occurrences for one of the variables:
         ggplot(data = dataset, mapping = aes(y = .data[[y_comp]])) + # The .data is needed to use a string for the columnname.
-            geom_boxplot(fill = "green", alpha = 0.5) +
+            geom_boxplot(fill = color_theme, alpha = 0.5) +
             xlab(x_comp) +
             ylab(y_comp) +
             ggtitle("test") +
@@ -251,6 +251,35 @@ comparison_graph <- function(dataset, x_comp, y_comp, count_var) {
 
 }
 
+longer_df <- function(dataframe) {
+    df <- df %>%
+        pivot_longer(
+            cols = c("AGE_T1", "AGE_T2", "AGE_T3"),
+            names_to = "time",
+            values_to = "value"
+        )
+    return(df)
+}
+
+
+#' Plot the the two selected variables over time (T1, T2 and T3)
+#' @param dataset, name of the dataset description
+#' @param x_comp, the variable that should be put on the x-axis.
+#' @param y_comp, the variable that should be put on the y-axis.
+#' @return Returns a graph.
+progression_graph <- function(dataset, x_comp, y_comp, count_var, color_theme) {
+    long_df <- longer_df(dataset)
+
+    if (count_var) { # If the user wanted to only display the amount of occurrences for one of the variables:
+        ggplot(data = long_df, aes(x = time, y = value, group = 1)) +
+            geom_line() +
+            geom_point() +
+            theme_minimal() +
+            labs(x = "Time", y = "Value")
+
+}}
+
+
 # To-do: write docstrings for all functions below:
 
 compare_age <- function(dataset, given_age) {
@@ -270,3 +299,16 @@ compare_age <- function(dataset, given_age) {
     cat("Cohen's d:", round(cohens_d, 3), "\n")
     cat("Interpretation:", interpretation, "\n")
 }
+
+
+stat_viewer <- function(dataset, comparison_var1, comparison_var2) {
+    a <- comparison_var1
+    b <- comparison_var2
+
+    stat_data <- summary(lifelines_df[c("GENDER", "AGE_T1")])
+
+    return(stat_data)
+
+}
+
+

@@ -19,9 +19,31 @@ server <- function(input, output, session) {
         return(df)
     })
 
- #   output$comparison_table <- renderDataTable({
-    #    dynamic_dataframe()
-  #  })
+    output$progression_graph <- renderPlot({
+        df <- dynamic_dataframe()
+
+        # The two variable for the x and y axis.
+        x_comp <- input$comparison_1
+        y_comp <- input$comparison_2
+
+        if ("Count" %in% input$comparison_1) {
+            count_var <- TRUE
+        } else {
+            count_var <- FALSE
+        }
+
+        progression_graph(df, x_comp, y_comp, count_var, input$color_theme)
+
+
+    })
+
+    # To print general statistics like mean, sd and variance for the selected variables.
+    output$stats <- renderTable({
+        df <- dynamic_dataframe()
+        stat_viewer(df, input$comparison_1, input$comparison_2)
+
+
+    })
 
     output$weight_dist <- renderPlot({
         df <- dynamic_dataframe()
@@ -30,6 +52,8 @@ server <- function(input, output, session) {
 
     output$comparison_graph <- renderPlot({
         df <- dynamic_dataframe()
+
+      # The two variable for the x and y axis.
       x_comp <- input$comparison_1
       y_comp <- input$comparison_2
 
@@ -39,7 +63,7 @@ server <- function(input, output, session) {
         count_var <- FALSE
     }
 
-      comparison_graph(df, x_comp, y_comp, count_var )
+      comparison_graph(df, x_comp, y_comp, count_var, input$color_theme)
 
 
     })
@@ -96,6 +120,14 @@ server <- function(input, output, session) {
 #    })
 
     output$interactive_table1 <- renderDataTable(lifelines_df)
+
+    output$interactive_table_filterd <- renderDataTable({
+        df <- dynamic_dataframe()
+        df
+        })
+
+
+
 
     output$selected_values <- renderPrint({
         lower <- input$age_slider[1]

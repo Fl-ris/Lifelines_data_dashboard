@@ -12,103 +12,142 @@ ui <- page_sidebar(
     theme = bs_theme(preset = "flatly"),
 
 
-    mainPanel(
-        tabsetPanel(
-            tabPanel("Correlations",
-                     tabsetPanel(
-                         tabPanel("Graphs",
-                                  textOutput("data_points"),
-                               plotOutput(outputId = "comparison_graph"),
-
-                         ),
-                         tabPanel("Progression over time",
-                                  # Plot the average change for all the measurements like changes in weight for T1, T2 and T3.
-                                  h3("Plots here....")))
+    mainPanel(tabsetPanel(
+        tabPanel("Correlations", tabsetPanel(
+            tabPanel(
+                "Graphs",
+                textOutput("data_points"),
+                plotOutput(outputId = "comparison_graph"),
 
             ),
-
-            tabPanel("General statistics",
-                     card(h4("Explore the interactive data table below:"),
-                          p("To-do: Add tooltips for options?")
-
-                     ),
-                     tabsetPanel(
-                         tabPanel("Whole dataset",
-                                  p("The dataset in its entirety:"),
-
-                                  # Use the DT library to show an interactive table:
-                                  DTOutput("interactive_table1")
+            tabPanel(
+                "Progression over time",
+                # Plot the average change for all the measurements like changes in weight for T1, T2 and T3.
+                plotOutput(outputId = "progression_graph"),
 
 
-                         ),
-                         tabPanel("Stats",
+            )
+        ), ),
 
-                                  p("First, select the parameters you would like to use with the sidepanel on the left."))),
-
-                     # To-do: add filter in server.R
-                     # To-do: add table with general stats like avg. height for men/women etc.
+        tabPanel(
+            "General statistics",
+            card(
 
             ),
+            tabsetPanel(
+                tabPanel("Significance calculator", # Use the DT library to show an interactive table:
+                         DTOutput("interactive_table1")),
+                tabPanel(
+                    "Stats",
 
-            tabPanel("About",
-                     # p("To-do: ...."),
-                     tabsetPanel(
-                         tabPanel("Interpretation",
-                                  h3("To-do: write about the project and interpretation of the data.")
+                    p("First, select the parameters you would like to use with the sidepanel on the left."),
+                    DTOutput("stats")
 
-                         ),
-                         tabPanel("Test:",
-                                  h3("To-do: "))
-
-                     ),
-
-                     tabPanel("Origin of the data",
-                              h3("To-do: Explain how the data was acquired"))
-
+                )
             ),
 
+            # To-do: add table with general stats like avg. height for men/women etc.
 
         ),
-    ),
+        tabPanel(
+            "Raw data",
+            p("Use the table below to explore the entire dataset."),
+            tabsetPanel(
+                tabPanel(
+                    "Entire dataset",
+                    p("The dataset in its entirety:"),
+                    h3("To-do: write about the project and interpretation of the data."),
+                    # Use the DT library to show an interactive table:
+                    DTOutput("interactive_table1"),
+                ),
+                tabPanel(
+                    "Filterd dataset:",
+                    h3("Explore the filterd dataset using the parameters on the left."),
+                    DTOutput("interactive_table_filterd")
+                ),
+            ),
+
+            tabPanel("Origin of the data", h3("To-do: Explain how the data was acquired"))
+
+        ),
+
+        tabPanel(
+            "About",
+            # p("To-do: ...."),
+            tabsetPanel(tabPanel(
+                "Interpretation",
+                h3("To-do: write about the project and interpretation of the data.")
+
+            ), tabPanel("Test:", h3("To-do: "))),
+
+            tabPanel("Origin of the data", h3("To-do: Explain how the data was acquired"))
+
+        ),
+
+
+    ), ),
 
 
     sidebar = sidebar(
-
-        card(
-            p("What to compare?"),
-
-
+        card(p("What to compare?"), ),
+        # card(
+        selectInput(
+            inputId = "comparison_1",
+            label = "Variable one",
+            choices = list(
+                `cat1` = list("AGE_T1", "GENDER", "Count", "Smoking status", "Education group"),
+                `Body characteristics` = list("Height group", "Weight group", "other.."),
+                `Socioeconomic status` = list("Income class", "other", "other"),
+                `Medical stats:` = list("DBP_T1", "SBP_T1")
+            ),
+            selected = NULL,
+            multiple = FALSE,
+            selectize = TRUE,
+            width = NULL,
+            size = NULL
+            #  ),
         ),
-       # card(
-            selectInput(
-                inputId="comparison_1",
-                label="Variable one",
-                choices=list(`cat1` = list("AGE_T1", "GENDER", "Count", "Smoking status", "Education group"),
-                             `Body characteristics` = list("Height group", "Weight group", "other.."),
-                             `Socioeconomic status` = list("Income class", "other", "other"),
-                             `Medical stats:` = list("DBP_T1", "SBP_T1")),
-                selected = NULL,
-                multiple = FALSE,
-                selectize = TRUE,
-                width = NULL,
-                size = NULL
-          #  ),
-        ),
-      #  card(
-            selectInput(
-                inputId="comparison_2",
-                label="Variable two",
-                choices=list(`Count:` = list("Count"),
-                             `Body measurements:` = list("GENDER", "AGE_T1", "HEIGHT_T1", "WEIGHT_T1", "BMI_T1", "WAIST_T1", "", "" ),
-                             `Socioeconomic status` = list("FINANCE_T1", "EDUCATION_LOWER_T1", "LOW_QUALITY_OF_LIFE_T1", ""),
-                             `Medical stats:` = list("DBP_T1", "SBP_T1", "HBF_T1", "CHO_T1", "GLU_T1")),
-                selected = NULL,
-                multiple = FALSE,
-                selectize = TRUE,
-                width = NULL,
-                size = NULL
+        #  card(
+        selectInput(
+            inputId = "comparison_2",
+            label = "Variable two",
+            choices = list(
+                `Count:` = list("Count"),
+                `Body measurements:` = list(
+                    "GENDER",
+                    "AGE_T1",
+                    "HEIGHT_T1",
+                    "WEIGHT_T1",
+                    "BMI_T1",
+                    "WAIST_T1",
+                    "PREGNANCIES"
+                ),
+                `Socioeconomic status` = list("FINANCE_T1", "EDUCATION_LOWER_T1", "LOW_QUALITY_OF_LIFE_T1"),
+                `Medical stats:` = list("DBP_T1", "SBP_T1", "HBF_T1", "CHO_T1", "GLU_T1"),
+                `Opinions and mental issues:` = list(
+                    "MENTAL_DISORDER_T1",
+                    "LTE_SUM_T1",
+                    "LDI_SUM_T1",
+                    "DEPRESSION_T1"
+                ),
+                `Personality:` = list(
+                    "C_SUM_T1",
+                    "A_SUM_T1",
+                    "SC_SUM_T1",
+                    "I_SUM_T1",
+                    "E_SUM_T1",
+                    "SD_SUM_T1",
+                    "V_SUM_T1",
+                    "D_SUM_T1"
+                )
+            ),
+            selected = NULL,
+            multiple = FALSE,
+            selectize = TRUE,
+            width = NULL,
+            size = NULL
 
-          #  ),
+            #  ),
 
 
 
@@ -154,33 +193,54 @@ ui <- page_sidebar(
             sliderTextInput(
                 inputId = "salary_slider",
                 label = "Monthly salary (Eur):",
-                choices = c("I do not know", "I don't want to answer", "Less than 750", "750 - 1000", "1000 - 1500", "1500 - 2000", "2000 - 2500", "2500 - 3000", "3000 - 3500", "More than 3500"),
+                choices = c(
+                    "I do not know",
+                    "I don't want to answer",
+                    "Less than 750",
+                    "750 - 1000",
+                    "1000 - 1500",
+                    "1500 - 2000",
+                    "2000 - 2500",
+                    "2500 - 3000",
+                    "3000 - 3500",
+                    "More than 3500"
+                ),
                 selected = c("I do not know", "More than 3500")
 
             ),
             checkboxGroupInput(
                 "education_checkbox",
                 "Level of education ",
-                c(
-                    "Lower education" = "a",
-                    "Higher educated" = "b"
-                ),selected = c("a","b")
+                c("Lower education" = "a", "Higher educated" = "b"),
+                selected = c("a", "b")
             ),
 
         ),
 
         selectInput(
-            inputId="facet_wrap_cat",
-            label="Facet_wrap category:",
-            choices=list("Gender", "Age group", "Income class"),
-            selected = NULL,
+            inputId = "color_theme",
+            label = "Color scheme:",
+            choices = list("Green", "Blue", "Red", "Orange", "Black", "Forestgreen"),
+            selected = "Red",
             multiple = FALSE,
             selectize = TRUE,
             width = NULL,
             size = NULL
         ),
-        nav_item(
-            input_dark_mode(id = "dark_mode", mode = "light")),
+
+        selectInput(
+            inputId = "graph_selector",
+            label = "Graph type:",
+            choices = list("Box-plot", "Violin-plot", "Scatter-plot", "...", "..", ".."),
+            selected = "Red",
+            multiple = FALSE,
+            selectize = TRUE,
+            width = NULL,
+            size = NULL
+        ),
+
+
+        nav_item(input_dark_mode(id = "dark_mode", mode = "light")),
     ),
 
 
@@ -190,10 +250,10 @@ ui <- page_sidebar(
     #  plotOutput(outputId = "distHeight"),
     #plotOutput(outputId = "wealth_cor"),
 
-   # textOutput(outputId = "selected_values"),
+    # textOutput(outputId = "selected_values"),
 
 
-
+    #  plotOutput(outputId = "progression_graph"),
 
     #  )
     #)
