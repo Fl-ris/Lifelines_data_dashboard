@@ -539,4 +539,22 @@ ggplot(data = lifelines_df, aes(x = AGE_T1)) +
            color = c("green", "blue", "red"))
 ```
 
+```{r}
+    testtt <- lifelines_df %>%
+        pivot_longer(
+            cols = c("AGE_T1", "AGE_T2", "AGE_T3"), 
+            names_to = "time",
+            values_to = "value"
+        ) 
+```
+
+```{r}
+#test <- subset(lifelines_df, select = GENDER)
+
+#table(test)
+
+summary(lifelines_df[c("GENDER", "AGE_T1")])
+
+
+```
 
