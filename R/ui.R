@@ -68,11 +68,17 @@ ui <- page_sidebar(
 
                     # Use the DT library to show an interactive table:
                     DTOutput("interactive_table1"),
+
                 ),
                 tabPanel(
                     "Filtered dataset:",
-                    h3("Explore the filterd dataset using the parameters on the left."),
-                    DTOutput("interactive_table_filterd")
+                    p("Explore the filterd dataset using the parameters on the left."),
+                    card(
+                        p("Download filtered dataframe:"),
+                        downloadButton("downloadData", "Download"),
+                    ),
+                    DTOutput("interactive_table_filterd"),
+
                 ),
             ),
 
@@ -140,7 +146,7 @@ ui <- page_sidebar(
                     "D_SUM_T1"
                 )
             ),
-            selected = "Count",
+            selected = "HEIGHT_T1",
 
         ),
         selectizeInput(
@@ -176,7 +182,7 @@ ui <- page_sidebar(
                     "D_SUM_T1"
                 )
             ),
-            selected = "Count",
+            selected = "AGE_T1",
         ),
 
 
@@ -240,7 +246,7 @@ ui <- page_sidebar(
             inputId = "color_theme",
             label = "Color scheme:",
             choices = list("Green", "Blue", "Red", "Orange", "Black", "Forestgreen"),
-            selected = "Red",
+            selected = "Blue",
             multiple = FALSE,
             selectize = TRUE,
             width = NULL,
@@ -251,7 +257,7 @@ ui <- page_sidebar(
             inputId = "graph_selector",
             label = "Graph type:",
             choices = list("violin", "barplot", "boxplot", "lineplot", "scatterplot"),
-            selected = "boxplot",
+            selected = "violin",
             multiple = FALSE,
             selectize = TRUE,
             width = NULL,
@@ -261,7 +267,7 @@ ui <- page_sidebar(
         sliderInput(
             "alpha_slider", "Alpha",
             min = 0, max = 1,
-            value = 0.5
+            value = 0.45
         ),
 
 

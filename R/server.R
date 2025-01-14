@@ -158,4 +158,17 @@ server <- function(input, output, session) {
         upper <- input$age_slider[2]
         paste("Lower value:", lower, "\nUpper value:", upper)
     })
+
+
+
+    output$downloadData <- downloadHandler(
+        filename = function() {
+            paste("input", ".csv", sep = "")
+        },
+        content = function(file) {
+            write.csv(dynamic_dataframe(), file, row.names = FALSE)
+        }
+    )
 }
+
+
