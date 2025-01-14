@@ -558,3 +558,97 @@ summary(lifelines_df[c("GENDER", "AGE_T1")])
 
 ```
 
+```{r}
+sig_calculator <- function(dataset, column_name, given_value) {
+    column_data <- dataset[[column_name]]
+
+    if (!is.numeric(column_data)) {
+        return("Please select a numeric variable!")
+    }
+
+    # Calculate Cohen's d
+    cohens_d <- abs(mean(column_data, na.rm = TRUE) - given_value) / sd(column_data, na.rm = TRUE)
+
+    interpretation <- case_when(
+        cohens_d < 0.2 ~ "negligible difference",
+        cohens_d < 0.5 ~ "small difference",
+        cohens_d < 0.8 ~ "medium difference",
+        cohens_d >= 0.8 ~  "large difference"
+    )
+
+    result_table <- data.frame(
+        Metric = c("Given Value", "Column Name", "Column Mean", "Column SD", "Cohen's d", "Interpretation"),
+        Value = c(
+            given_value,
+            column_name,
+            round(mean(column_data, na.rm = TRUE), 2),
+            round(sd(column_data, na.rm = TRUE), 2),
+            round(cohens_d, 3),
+            interpretation
+        )
+    )
+
+    return(result_table)
+}
+
+sig_calculator(lifelines_df, "AGE_T1", 33)
+
+```
+```{r}
+comparison_graph <- function(dataset, x_comp, y_comp, count_var, color_theme, graph_type, alpha_value) {
+
+    if (count_var) {
+        # If the user wants to count occurrences of only one variable:
+        base_plot <- ggplot(data = dataset, mapping = aes(y = .data[[y_comp]]))
+    } else {
+        # If the user wants to compare two variables:
+        base_plot <- ggplot(data = dataset, mapping = aes(x = .data[[x_comp]], y = .data[[y_comp]]))
+    }
+
+    # Add the selected graph type and common elements
+    if (graph_type == "boxplot") {
+        base_plot +
+            geom_boxplot(fill = color_theme, alpha = alpha_value) +
+            xlab(x_comp) +
+            ylab(y_comp) +
+            ggtitle(paste("Comparison of", x_comp, "and", y_comp)) +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+    } else if (graph_type == "scatterplot") {
+        base_plot +
+            geom_point(color = color_theme, alpha = alpha_value) +
+            xlab(x_comp) +
+            ylab(y_comp) +
+            ggtitle(paste("Comparison of", x_comp, "and", y_comp)) +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+    } else if (graph_type == "barplot") {
+        base_plot +
+            geom_bar(stat = "identity", fill = color_theme, alpha = alpha_value) +
+            xlab(x_comp) +
+            ylab(y_comp) +
+            ggtitle(paste("Comparison of", x_comp, "and", y_comp)) +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+    } else if (graph_type == "violin") {
+        base_plot +
+            geom_violin(fill = color_theme, alpha = alpha_value) +
+            xlab(x_comp) +
+            ylab(y_comp) +
+            ggtitle(paste("Comparison of", x_comp, "and", y_comp)) +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+    } else if (graph_type == "lineplot") {
+        base_plot +
+            geom_line(color = color_theme, alpha = alpha_value) +
+            xlab(x_comp) +
+            ylab(y_comp) +
+            ggtitle(paste("Comparison of", x_comp, "and", y_comp)) +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+    }
+}
+
+comparison_graph(lifelines_df, "AGE_T1", "WEIGHT_T1", FALSE, "blue", "boxplot", 1)
+```
+
