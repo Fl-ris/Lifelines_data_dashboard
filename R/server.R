@@ -38,7 +38,7 @@ server <- function(input, output, session) {
     })
 
     # To print general statistics like mean, sd and variance for the selected variables.
-    output$stats <- renderTable({
+    output$stats <- renderDT({
         df <- dynamic_dataframe()
         stat_viewer(df, input$comparison_1, input$comparison_2)
 
@@ -114,12 +114,21 @@ server <- function(input, output, session) {
         paste("Amount of datapoints used with these filters:", length(df$GENDER))
     })
 
+    output$sig_comparison <- renderDataTable({
+        df <- dynamic_dataframe()
+        comparison_number <- input$sig_input_field
+        sig_comparison(df, input$comparison_1, comparison_number)
+    })
+
+
 #    output$testtt <- renderText({
 #        df <- dynamic_dataframe()
 #        paste("Input", input$comparison_1)
 #    })
 
     output$interactive_table1 <- renderDataTable(lifelines_df)
+
+
 
     output$interactive_table_filterd <- renderDataTable({
         df <- dynamic_dataframe()

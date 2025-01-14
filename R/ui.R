@@ -29,26 +29,35 @@ ui <- page_sidebar(
             )
         ), ),
 
-        tabPanel(
-            "General statistics",
-            card(
-
+        tabPanel("Statistics", card(), tabsetPanel(
+            tabPanel(
+                "Significance calculator",
+                # Use the DT library to show an interactive table:
+                h5(
+                    "Compare a number of your choosing, like age,height or weight to the dataset mean."
+                ),
+                p("First select a numerical variable from the 'Variable one' menu."),
+                p("Use the input field below to input a number."),
+                numericInput(
+                    "sig_input_field",
+                    "",
+                    value = 30,
+                    min = 0,
+                    max = 9999
+                ),
+                DTOutput("sig_comparison")
             ),
-            tabsetPanel(
-                tabPanel("Significance calculator", # Use the DT library to show an interactive table:
-                         DTOutput("interactive_table1")),
-                tabPanel(
-                    "Stats",
 
-                    p("First, select the parameters you would like to use with the sidepanel on the left."),
-                    DTOutput("stats")
+            tabPanel(
+                "Stats",
 
-                )
-            ),
+                p(
+                    "First, select the parameters you would like to use with the sidepanel on the left."
+                ),
+                tableOutput("stats")
 
-            # To-do: add table with general stats like avg. height for men/women etc.
-
-        ),
+            )
+        ), ),
         tabPanel(
             "Raw data",
             p("Use the table below to explore the entire dataset."),
@@ -76,9 +85,22 @@ ui <- page_sidebar(
             # p("To-do: ...."),
             tabsetPanel(tabPanel(
                 "Interpretation",
-                h3("To-do: write about the project and interpretation of the data.")
+                h3("")
 
-            ), tabPanel("Test:", h3("To-do: "))),
+            ), tabPanel(
+                "Lifelines",
+                h4("About the project:"),
+                p(
+                    "
+                    Lifelines is a large, multigenerational cohort study that includes over 167,000 participants (10%) from the northern population of the Netherlands. Included are participants from three generations, who are followed with a lifespan perspective,
+                    to obtain insight into healthy ageing."),
+                    p("
+                    The aim of Lifelines is to be a resource for the national and international scientific community.
+
+                    To facilitare research we collect data and biosamples, using questionnaires, physical measurements and sampling, since 2006. "),
+                    p("Every 1.5 years participants complete a questionnaire and once every 5 years participants visit a Lifelines location where biosamples are collected and several measurements and tests are conducted.
+                    "),
+            )),
 
             tabPanel("Origin of the data", h3("To-do: Explain how the data was acquired"))
 
@@ -95,10 +117,34 @@ ui <- page_sidebar(
             inputId = "comparison_1",
             label = "Variable one",
             choices = list(
-                `cat1` = list("AGE_T1", "GENDER", "Count", "Smoking status", "Education group"),
-                `Body characteristics` = list("Height group", "Weight group", "other.."),
-                `Socioeconomic status` = list("Income class", "other", "other"),
-                `Medical stats:` = list("DBP_T1", "SBP_T1")
+                `Count:` = list("Count"),
+                `Body measurements:` = list(
+                    "GENDER",
+                    "AGE_T1",
+                    "HEIGHT_T1",
+                    "WEIGHT_T1",
+                    "BMI_T1",
+                    "WAIST_T1",
+                    "PREGNANCIES"
+                ),
+                `Socioeconomic status` = list("FINANCE_T1", "EDUCATION_LOWER_T1", "LOW_QUALITY_OF_LIFE_T1"),
+                `Medical stats:` = list("DBP_T1", "SBP_T1", "HBF_T1", "CHO_T1", "GLU_T1"),
+                `Opinions and mental issues:` = list(
+                    "MENTAL_DISORDER_T1",
+                    "LTE_SUM_T1",
+                    "LDI_SUM_T1",
+                    "DEPRESSION_T1"
+                ),
+                `Personality:` = list(
+                    "C_SUM_T1",
+                    "A_SUM_T1",
+                    "SC_SUM_T1",
+                    "I_SUM_T1",
+                    "E_SUM_T1",
+                    "SD_SUM_T1",
+                    "V_SUM_T1",
+                    "D_SUM_T1"
+                )
             ),
             selected = NULL,
             multiple = FALSE,

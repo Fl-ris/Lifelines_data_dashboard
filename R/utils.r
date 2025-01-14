@@ -282,33 +282,54 @@ progression_graph <- function(dataset, x_comp, y_comp, count_var, color_theme) {
 
 # To-do: write docstrings for all functions below:
 
-compare_age <- function(dataset, given_age) {
-    cohens_d <- abs(mean(dataset) - given_age) / sd(dataset)
+sig_calculator <- function(dataset, column_name, given_value) {
+    column_data <- dataset[[column_name]]
 
-    # Interpret the difference
+    if (!is.numeric(column_data)) {
+        return("Please select a numeric variable!")
+    }
+
+    # Calculate Cohen's d
+    cohens_d <- abs(mean(column_data, na.rm = TRUE) - given_value) / sd(column_data, na.rm = TRUE)
+
     interpretation <- case_when(
-        cohens_d < 0.2 ~ "negligible difference",
+        cohens_d < 0.2 ~ "Very small difference",
         cohens_d < 0.5 ~ "small difference",
         cohens_d < 0.8 ~ "medium difference",
-        TRUE ~ "large difference"
+        cohens_d >= 0.8 ~  "large difference"
     )
 
-    cat("Given age:", given_age, "\n")
-    cat("Dataset mean:", mean(dataset), "\n")
-    cat("Dataset SD:", sd(dataset), "\n")
-    cat("Cohen's d:", round(cohens_d, 3), "\n")
-    cat("Interpretation:", interpretation, "\n")
-}
+    result_table <- data.frame(
+        Metric = c("Given Value", "Column Name", "Column Mean", "Column SD", "Cohen's d", "Interpretation"),
+        Value = c(
+            given_value,
+            column_name,
+            round(mean(column_data, na.rm = TRUE), 2),
+            round(sd(column_data, na.rm = TRUE), 2),
+            round(cohens_d, 3),
+            interpretation
+        )
+    )
 
+    return(result_table)
+}
 
 stat_viewer <- function(dataset, comparison_var1, comparison_var2) {
     a <- comparison_var1
     b <- comparison_var2
 
-    stat_data <- summary(lifelines_df[c("GENDER", "AGE_T1")])
+    stat_data <- summary(lifelines_df[c(a, b)])
 
     return(stat_data)
 
 }
+
+sig_comparison <- function(dataset, comparison_var1, comparison_number) {
+
+    data_table <- sig_calculator(dataset, comparison_var1, comparison_number)
+
+    return(data_table)
+}
+
 
 
