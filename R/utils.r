@@ -226,30 +226,60 @@ weight_dist <- function(dataset, x_comp, y_comp) {
 #' @param x_comp, the variable that should be put on the x-axis.
 #' @param y_comp, the variable that should be put on the y-axis.
 #' @return Returns a graph.
-comparison_graph <- function(dataset, x_comp, y_comp, count_var, color_theme) {
+comparison_graph <- function(dataset, x_comp, y_comp, count_var, color_theme, graph_type, alpha_value) {
 
-    if (count_var) { # If the user wanted to only display the amount of occurrences for one of the variables:
-        ggplot(data = dataset, mapping = aes(y = .data[[y_comp]])) + # The .data is needed to use a string for the columnname.
-            geom_boxplot(fill = color_theme, alpha = 0.5) +
-            xlab(x_comp) +
-            ylab(y_comp) +
-            ggtitle("test") +
-            facet_wrap(~ GENDER) +
-            theme_minimal()
-
-    } else { # If the user wanted to compare two variables to each other:
-        ggplot(data = dataset, mapping = aes(y = .data[[x_comp]], x = .data[[y_comp]])) +
-            geom_boxplot(fill = "green", alpha = 0.5) +
-            xlab("Count: ") +
-            ylab("Weight") +
-            ggtitle("test") +
-            facet_wrap(~ GENDER) +
-            theme_minimal()
-
+    if (count_var) {
+        # If the user wants to count occurrences of only one variable:
+        base_plot <- ggplot(data = dataset, mapping = aes(y = .data[[y_comp]]))
+    } else {
+        # If the user wants to compare two variables:
+        base_plot <- ggplot(data = dataset, mapping = aes(x = .data[[x_comp]], y = .data[[y_comp]]))
     }
 
-
+    if (graph_type == "boxplot") {
+        base_plot +
+            geom_boxplot(fill = color_theme, alpha = alpha_value) +
+            xlab(x_comp) +
+            ylab(y_comp) +
+            ggtitle(paste("Comparison of", x_comp, "and", y_comp)) +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+    } else if (graph_type == "scatterplot") {
+        base_plot +
+            geom_point(color = color_theme, alpha = alpha_value) +
+            xlab(x_comp) +
+            ylab(y_comp) +
+            ggtitle(paste("Comparison of", x_comp, "and", y_comp)) +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+    } else if (graph_type == "barplot") {
+        base_plot +
+            geom_bar(stat = "identity", fill = color_theme, alpha = alpha_value) +
+            xlab(x_comp) +
+            ylab(y_comp) +
+            ggtitle(paste("Comparison of", x_comp, "and", y_comp)) +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+    } else if (graph_type == "violin") {
+        base_plot +
+            geom_violin(fill = color_theme, alpha = alpha_value) +
+            xlab(x_comp) +
+            ylab(y_comp) +
+            ggtitle(paste("Comparison of", x_comp, "and", y_comp)) +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+    } else if (graph_type == "lineplot") {
+        base_plot +
+            geom_line(color = color_theme, alpha = alpha_value) +
+            xlab(x_comp) +
+            ylab(y_comp) +
+            ggtitle(paste("Comparison of", x_comp, "and", y_comp)) +
+            facet_wrap(~ GENDER) +
+            theme_minimal()
+    }
 }
+
+
 
 longer_df <- function(dataframe) {
     df <- df %>%

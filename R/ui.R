@@ -64,25 +64,22 @@ ui <- page_sidebar(
             tabsetPanel(
                 tabPanel(
                     "Entire dataset",
-                    p("The dataset in its entirety:"),
-                    h3("To-do: write about the project and interpretation of the data."),
+                    p("The unfiltered dataset in its entirety:"),
+
                     # Use the DT library to show an interactive table:
                     DTOutput("interactive_table1"),
                 ),
                 tabPanel(
-                    "Filterd dataset:",
+                    "Filtered dataset:",
                     h3("Explore the filterd dataset using the parameters on the left."),
                     DTOutput("interactive_table_filterd")
                 ),
             ),
 
-            tabPanel("Origin of the data", h3("To-do: Explain how the data was acquired"))
-
         ),
 
         tabPanel(
             "About",
-            # p("To-do: ...."),
             tabsetPanel(tabPanel(
                 "Interpretation",
                 h3("")
@@ -102,8 +99,6 @@ ui <- page_sidebar(
                     "),
             )),
 
-            tabPanel("Origin of the data", h3("To-do: Explain how the data was acquired"))
-
         ),
 
 
@@ -112,8 +107,7 @@ ui <- page_sidebar(
 
     sidebar = sidebar(
         card(p("What to compare?"), ),
-        # card(
-        selectInput(
+        selectizeInput(
             inputId = "comparison_1",
             label = "Variable one",
             choices = list(
@@ -146,15 +140,10 @@ ui <- page_sidebar(
                     "D_SUM_T1"
                 )
             ),
-            selected = NULL,
-            multiple = FALSE,
-            selectize = TRUE,
-            width = NULL,
-            size = NULL
-            #  ),
+            selected = "Count",
+
         ),
-        #  card(
-        selectInput(
+        selectizeInput(
             inputId = "comparison_2",
             label = "Variable two",
             choices = list(
@@ -187,28 +176,12 @@ ui <- page_sidebar(
                     "D_SUM_T1"
                 )
             ),
-            selected = NULL,
-            multiple = FALSE,
-            selectize = TRUE,
-            width = NULL,
-            size = NULL
-
-            #  ),
-
-
-
+            selected = "Count",
         ),
 
 
         card(
             p("Filter the displayed data using the following parameters:"),
-
-            selectInput(
-                "gender_selector",
-                "Participant gender:",
-                list("Men" = "1A", "Women" = "1B"),
-                multiple = TRUE
-            ),
 
 
             sliderInput(
@@ -262,7 +235,7 @@ ui <- page_sidebar(
             ),
 
         ),
-
+        card(
         selectInput(
             inputId = "color_theme",
             label = "Color scheme:",
@@ -277,31 +250,24 @@ ui <- page_sidebar(
         selectInput(
             inputId = "graph_selector",
             label = "Graph type:",
-            choices = list("Box-plot", "Violin-plot", "Scatter-plot", "...", "..", ".."),
-            selected = "Red",
+            choices = list("violin", "barplot", "boxplot", "lineplot", "scatterplot"),
+            selected = "boxplot",
             multiple = FALSE,
             selectize = TRUE,
             width = NULL,
             size = NULL
         ),
 
+        sliderInput(
+            "alpha_slider", "Alpha",
+            min = 0, max = 1,
+            value = 0.5
+        ),
+
 
         nav_item(input_dark_mode(id = "dark_mode", mode = "light")),
     ),
+),
 
-
-    # mainPanel(
-    #  card(
-
-    #  plotOutput(outputId = "distHeight"),
-    #plotOutput(outputId = "wealth_cor"),
-
-    # textOutput(outputId = "selected_values"),
-
-
-    #  plotOutput(outputId = "progression_graph"),
-
-    #  )
-    #)
 
 )

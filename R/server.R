@@ -1,20 +1,23 @@
 
 
+
 source(file = here("R", "utils.r"))
 
 server <- function(input, output, session) {
-
-
     # To-do: Turn this into a function and place into the utils.r file.
     # Subset of the dataframe depending on the user's input selection.
     dynamic_dataframe <- reactive({
-      #  req(input$comparison_1, input$comparison_2)  # Ensure inputs exist
+        #  req(input$comparison_1, input$comparison_2)
 
         df <- lifelines_df %>%
-            filter(AGE_T1 >= input$age_slider[1] & AGE_T1 <= input$age_slider[2],
-                   HEIGHT_T1 >= input$height_slider[1] & HEIGHT_T1 <= input$height_slider[2],
-                   WEIGHT_T1 >= input$weight_slider[1] & WEIGHT_T1 <= input$weight_slider[2],
-                   (FINANCE_T1 %in% input$salary_slider))
+            filter(
+                AGE_T1 >= input$age_slider[1] & AGE_T1 <= input$age_slider[2],
+                HEIGHT_T1 >= input$height_slider[1] &
+                    HEIGHT_T1 <= input$height_slider[2],
+                WEIGHT_T1 >= input$weight_slider[1] &
+                    WEIGHT_T1 <= input$weight_slider[2],
+                (FINANCE_T1 %in% input$salary_slider)
+            )
 
         return(df)
     })
@@ -53,17 +56,27 @@ server <- function(input, output, session) {
     output$comparison_graph <- renderPlot({
         df <- dynamic_dataframe()
 
-      # The two variable for the x and y axis.
-      x_comp <- input$comparison_1
-      y_comp <- input$comparison_2
+        # The two variable for the x and y axis.
+        x_comp <- input$comparison_1
+        y_comp <- input$comparison_2
+        color_theme <- input$color_theme
+        graph_type <- input$graph_selector
+        alpha_value <- input$alpha_slider
 
-    if ("Count" %in% input$comparison_1) {
-        count_var <- TRUE
-    } else {
-        count_var <- FALSE
-    }
+        # Set count_var to TRUE if the user only wants to compare the amount of occurrences of a variable.
+        if ("Count" %in% input$comparison_1) {
+            count_var <- TRUE
+        } else {
+            count_var <- FALSE
+        }
 
-      comparison_graph(df, x_comp, y_comp, count_var, input$color_theme)
+        comparison_graph(df,
+                         x_comp,
+                         y_comp,
+                         count_var,
+                         color_theme,
+                         graph_type,
+                         alpha_value)
 
 
     })
@@ -102,7 +115,7 @@ server <- function(input, output, session) {
     })
 
     output$wealth_cor <- renderPlot({
-      #  df <<-
+        #  df <<-
         finance_neighborhood_cor(lifelines_df)
 
 
@@ -111,8 +124,10 @@ server <- function(input, output, session) {
 
     output$data_points <- renderText({
         df <- dynamic_dataframe()
-        paste("Amount of datapoints used with these filters:", length(df$GENDER))
+        paste("Amount of datapoints used with these filters:",
+              length(df$GENDER))
     })
+
 
     output$sig_comparison <- renderDataTable({
         df <- dynamic_dataframe()
@@ -121,10 +136,10 @@ server <- function(input, output, session) {
     })
 
 
-#    output$testtt <- renderText({
-#        df <- dynamic_dataframe()
-#        paste("Input", input$comparison_1)
-#    })
+    #    output$testtt <- renderText({
+    #        df <- dynamic_dataframe()
+    #        paste("Input", input$comparison_1)
+    #    })
 
     output$interactive_table1 <- renderDataTable(lifelines_df)
 
@@ -133,7 +148,7 @@ server <- function(input, output, session) {
     output$interactive_table_filterd <- renderDataTable({
         df <- dynamic_dataframe()
         df
-        })
+    })
 
 
 
@@ -142,4 +157,5 @@ server <- function(input, output, session) {
         lower <- input$age_slider[1]
         upper <- input$age_slider[2]
         paste("Lower value:", lower, "\nUpper value:", upper)
-    })}
+    })
+}
