@@ -4,10 +4,8 @@
 source(file = here("R", "utils.r"))
 
 server <- function(input, output, session) {
-    # To-do: Turn this into a function and place into the utils.r file.
     # Subset of the dataframe depending on the user's input selection.
     dynamic_dataframe <- reactive({
-        #  req(input$comparison_1, input$comparison_2)
 
         df <- lifelines_df %>%
             filter(
@@ -157,6 +155,12 @@ server <- function(input, output, session) {
         lower <- input$age_slider[1]
         upper <- input$age_slider[2]
         paste("Lower value:", lower, "\nUpper value:", upper)
+    })
+
+
+    output$column_text <- renderText({
+        # Use an external text file to not clutter the ui.r file with long text strings:
+        includeMarkdown(here("R/","colums.md"))
     })
 
 

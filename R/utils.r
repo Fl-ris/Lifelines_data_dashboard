@@ -258,7 +258,7 @@ comparison_graph <- function(dataset, x_comp, y_comp, count_var, color_theme, gr
             xlab(x_comp) +
             ylab(y_comp) +
             ggtitle(paste("Comparison of", x_comp, "and", y_comp)) +
-            facet_wrap(~ GENDER) +
+           facet_wrap(~ GENDER) +
             theme_minimal()
     } else if (graph_type == "violin") {
         base_plot +
@@ -280,7 +280,9 @@ comparison_graph <- function(dataset, x_comp, y_comp, count_var, color_theme, gr
 }
 
 
-
+#' Make the data "long" for use in the time graph.
+#' @param dataframe The dataframe to be used.
+#' @return df returns the dataframe in long format.
 longer_df <- function(dataframe) {
     df <- df %>%
         pivot_longer(
@@ -307,11 +309,13 @@ progression_graph <- function(dataset, x_comp, y_comp, count_var, color_theme) {
             theme_minimal() +
             labs(x = "Time", y = "Value")
 
-}}
+    }}
 
-
-# To-do: write docstrings for all functions below:
-
+# To-do: write docstrings for all functions below.
+#' Calculate the significance for a given.
+#' @param dataset The dataset to be used.
+#' @param column_name The columns to be used.
+#' @param given_value The user specified value to use.
 sig_calculator <- function(dataset, column_name, given_value) {
     column_data <- dataset[[column_name]]
 

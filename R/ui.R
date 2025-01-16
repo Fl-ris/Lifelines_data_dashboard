@@ -6,11 +6,12 @@ library(tidyverse)
 library(DT)
 library(plotly)
 library(shinyWidgets)
+library(markdown)
+
 
 ui <- page_sidebar(
     titlePanel("Lifelines Visualizer:"),
     theme = bs_theme(preset = "flatly"),
-
 
     mainPanel(tabsetPanel(
         tabPanel("Correlations", tabsetPanel(
@@ -19,17 +20,17 @@ ui <- page_sidebar(
                 textOutput("data_points"),
                 plotOutput(outputId = "comparison_graph"),
 
-            ),
+                            ),
             tabPanel(
                 "Progression over time",
                 # Plot the average change for all the measurements like changes in weight for T1, T2 and T3.
-                plotOutput(outputId = "progression_graph"),
+                plotlyOutput(outputId = "progression_graph"),
 
 
             )
         ), ),
 
-        tabPanel("Statistics", card(), tabsetPanel(
+        tabPanel("Statistics", tabsetPanel(
             tabPanel(
                 "Significance calculator",
                 # Use the DT library to show an interactive table:
@@ -88,7 +89,8 @@ ui <- page_sidebar(
             "About",
             tabsetPanel(tabPanel(
                 "Interpretation",
-                h3("")
+                h4("The meaning of the dataset columns:"),
+                uiOutput("column_text"),
 
             ), tabPanel(
                 "Lifelines",
@@ -112,10 +114,44 @@ ui <- page_sidebar(
 
 
     sidebar = sidebar(
-        card(p("What to compare?"), ),
+
+        card(
+            h5("Graph settings"),
+            selectInput(
+                inputId = "graph_selector",
+                label = "Graph type:",
+                choices = list("violin", "barplot", "boxplot", "lineplot", "scatterplot"),
+                selected = "violin",
+                multiple = FALSE,
+                selectize = TRUE,
+                width = NULL,
+                size = NULL
+            ),
+
+            selectInput(
+                inputId = "color_theme",
+                label = "Color scheme:",
+                choices = list("Green", "Blue", "Red", "Orange", "Black", "Forestgreen"),
+                selected = "Blue",
+                multiple = FALSE,
+                selectize = TRUE,
+                width = NULL,
+                size = NULL
+            ),
+
+
+
+            sliderInput(
+                "alpha_slider", "Alpha",
+                min = 0, max = 1,
+                value = 0.45
+            ),
+),
+
+        p("What to compare?"),
         selectizeInput(
             inputId = "comparison_1",
-            label = "Variable one",
+            label = "X-Variable",
             choices = list(
                 `Count:` = list("Count"),
                 `Body measurements:` = list(
@@ -151,7 +187,7 @@ ui <- page_sidebar(
         ),
         selectizeInput(
             inputId = "comparison_2",
-            label = "Variable two",
+            label = "Y-Variable",
             choices = list(
                 `Count:` = list("Count"),
                 `Body measurements:` = list(
@@ -241,38 +277,9 @@ ui <- page_sidebar(
             ),
 
         ),
-        card(
-        selectInput(
-            inputId = "color_theme",
-            label = "Color scheme:",
-            choices = list("Green", "Blue", "Red", "Orange", "Black", "Forestgreen"),
-            selected = "Blue",
-            multiple = FALSE,
-            selectize = TRUE,
-            width = NULL,
-            size = NULL
-        ),
-
-        selectInput(
-            inputId = "graph_selector",
-            label = "Graph type:",
-            choices = list("violin", "barplot", "boxplot", "lineplot", "scatterplot"),
-            selected = "violin",
-            multiple = FALSE,
-            selectize = TRUE,
-            width = NULL,
-            size = NULL
-        ),
-
-        sliderInput(
-            "alpha_slider", "Alpha",
-            min = 0, max = 1,
-            value = 0.45
-        ),
-
 
         nav_item(input_dark_mode(id = "dark_mode", mode = "light")),
-    ),
+
 ),
 
 
