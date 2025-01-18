@@ -1,70 +1,10 @@
 
 
 
-#' Import the dataset to be used.
-#' @param dataset_path, Provide the path to the Lifelines dataset. description.
-#' @return A dataframe with the provided dataset.
-#' @export
-load_dataset <- function(dataset_path) {
-    library(shiny)
-    library(shinydashboard)
-    library(bslib)
-    library(here)
-    library(tidyverse)
-    library(DT)
-    library(plotly)
-    # Source the UI object from the following file:
-    source(file = here("R", "ui.R"))
-
-
-    # Source the Server object from the following file:
-    source(file = here("R", "server.R"))
-
-    source(file = here("R", "utils.r"))
-    # The "<<-" is to make a global variable.
-    lifelines_df <<- read.csv(file = dataset_path, header = TRUE)
-    lifelines_df <<- make_factors_df(lifelines_df)
-
-    data_loaded <- TRUE
-    return(lifelines_df)
-}
-
-
-#' Start the GUI
-#' @param dataset_path, Provide the path to the Lifelines dataset. description.
-#' @return A dataframe with the provided dataset.
-#' @export
-run_datadashboard <- function(dataset_path = here("Data", "Lifelines Public Health dataset - 2024.csv")) {
-    library(shiny)
-    library(shinydashboard)
-    library(bslib)
-    library(here)
-    library(tidyverse)
-    library(DT)
-    library(plotly)
-
-    here::here()
-    # To-do: maybe remove the load_dataset function and add a dataset path parameter to the run_datadashboard function.
-
-    # Source the UI object from the following file:
-    source(file = here("R", "ui.R"))
-
-
-    # Source the Server object from the following file:
-    source(file = here("R", "server.R"))
-
-    source(file = here("R", "utils.r"))
-    lifelines_df <<- read.csv(file = dataset_path, header = TRUE)
-
-    lifelines_df <<- make_factors_df(lifelines_df)
-
-    shinyApp(ui = ui, server = server)
-}
-
 #' Internal function to make factors from some colums of the dataframe.
 #' @param dataframe, load the dataframe to be used. description
 make_factors_df <- function(dataframe) {
-    lifelines_df <- lifelines_df %>%
+    lifelines_df <- dataframe %>%
         mutate(
             neighborhood_satisfaction = factor(
                 NEIGHBOURHOOD1_T2,
@@ -161,6 +101,68 @@ make_factors_df <- function(dataframe) {
 
 }
 
+#' Import the dataset to be used.
+#' @param dataset_path, Provide the path to the Lifelines dataset. description.
+#' @return A dataframe with the provided dataset.
+#' @export
+load_dataset <- function(dataset_path) {
+    library(shiny)
+    library(shinydashboard)
+    library(bslib)
+    library(here)
+    library(tidyverse)
+    library(DT)
+    library(plotly)
+    # Source the UI object from the following file:
+   # source(file = here("R", "ui.R"))
+
+
+    # Source the Server object from the following file:
+   # source(file = here("R", "server.R"))
+
+   # source(file = here("R", "utils.r"))
+    # The "<<-" is to make a global variable.
+    lifelines_df <- read.csv(file = dataset_path, header = TRUE)
+    lifelines_df <- make_factors_df(lifelines_df)
+
+    return(lifelines_df)
+}
+
+
+# The package could not be build without first declaring this dataframe, the user should load their own dataset
+# with the "load_dataset" function.
+lifelines_df <- load_dataset(here("Data", "Lifelines Public Health dataset - 2024.csv"))
+
+#' Start the GUI
+#' @param dataset_path, Provide the path to the Lifelines dataset. description.
+#' @return A dataframe with the provided dataset.
+#' @export
+run_datadashboard <- function(dataset_path = here("Data", "Lifelines Public Health dataset - 2024.csv")) {
+    library(shiny)
+    library(shinydashboard)
+    library(bslib)
+    library(here)
+    library(tidyverse)
+    library(DT)
+    library(plotly)
+
+    here::here()
+    # To-do: maybe remove the load_dataset function and add a dataset path parameter to the run_datadashboard function.
+
+    # Source the UI object from the following file:
+    source(file = here("R", "ui.R"))
+    source(file = here("R", "server.R"))
+    source(file = here("R", "utils.r"))
+
+    lifelines_df <- read.csv(file = dataset_path, header = TRUE)
+
+    lifelines_df <- make_factors_df(lifelines_df)
+
+    shinyApp(ui = ui, server = server)
+}
+
+
+
 
 #' Plot the correlation between monthly income and the satisfaction score.
 #' @param dataset, name of the dataset description
@@ -229,11 +231,11 @@ weight_dist <- function(dataset, x_comp, y_comp) {
 comparison_graph <- function(dataset,
                              x_comp,
                              y_comp,
-                             count_var,
+                             comp_one_var,
                              color_theme,
                              graph_type,
                              alpha_value) {
-    if (count_var) {
+    if (comp_one_var) {
         # If the user wants to count occurrences of only one variable:
         base_plot <- ggplot(data = dataset, mapping = aes(y = .data[[y_comp]]))
     } else {

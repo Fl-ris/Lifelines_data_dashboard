@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.r
 \name{finance_neighborhood_cor}
 \alias{finance_neighborhood_cor}
-\title{Plot the correlation between montly income and the satisfaction score.}
+\title{Plot the correlation between monthly income and the satisfaction score.}
 \usage{
 finance_neighborhood_cor(dataset)
 }
@@ -13,5 +13,5 @@ finance_neighborhood_cor(dataset)
 Returns a jitter graph.
 }
 \description{
-Plot the correlation between montly income and the satisfaction score.
+Plot the correlation between monthly income and the satisfaction score.
 }

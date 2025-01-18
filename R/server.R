@@ -13,6 +13,7 @@ library(markdown)
 source(file = here("R", "utils.r"))
 
 server <- function(input, output, session) {
+    #lifelines_df <- reactiveValues(df = NULL)
     # To-do: Turn this into a function and place into the utils.r file.
     # Subset of the dataframe depending on the user's input selection.
 
@@ -67,7 +68,7 @@ server <- function(input, output, session) {
         x_comp <- column_mapper(input$comparison_1)
         y_comp <- column_mapper(input$comparison_2)
 
-
+        comp_one_var <- input$comp_one_var
         color_theme <- input$color_theme
         graph_type <- input$graph_selector
         alpha_value <- input$alpha_slider
@@ -82,7 +83,7 @@ server <- function(input, output, session) {
         comparison_graph(df,
                          x_comp,
                          y_comp,
-                         count_var,
+                         comp_one_var,
                          color_theme,
                          graph_type,
                          alpha_value)
@@ -161,14 +162,16 @@ server <- function(input, output, session) {
     })
 
 
-
-
     output$selected_values <- renderPrint({
         lower <- input$age_slider[1]
         upper <- input$age_slider[2]
         paste("Lower value:", lower, "\nUpper value:", upper)
     })
 
+    output$column_text <- renderText({
+        # Use an external text file to not clutter the ui.r file with long text strings:
+        includeMarkdown(here("R/", "colums.md"))
+    })
 
 
     output$downloadData <- downloadHandler(

@@ -151,7 +151,7 @@ ui <- page_sidebar(
             ),
 
             checkboxInput(
-                "comp_one_var", "test", FALSE
+                "comp_one_var", "Compare count", FALSE
             ),
         ),
 
