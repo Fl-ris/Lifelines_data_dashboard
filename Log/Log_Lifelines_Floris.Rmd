@@ -441,7 +441,7 @@ ggplot(data = violin_df, aes(x= AGE_T1, y= LOW_QUALITY_OF_LIFE_T1, fill=LOW_QUAL
     ylab("Choice:") +
     theme_minimal()
 ```
-As seen in the graph above, there is a steep cut-off after 50 years for the "false" category.
+As seen in the graph above, there is a steep cut-off after 50 years for the "false" category. The reason for this I do not know.
 
 
 
@@ -525,18 +525,31 @@ compare_age(lifelines_df$AGE_T1, given_age = 25)
 
 ```{r}
 
-one_sd_less <- mean(lifelines_df$AGE_T1) - sd(lifelines_df$AGE_T1) 
-mean_value <- mean(lifelines_df$AGE_T1)  
-one_sd_more <- mean(lifelines_df$AGE_T1) + sd(lifelines_df$AGE_T1)
+sd_viewer <- function(dataset, column, value, color_theme) {
+
+    column_data <- dataset[[column]]
+    
+    mean_value <- mean(column_data, na.rm = TRUE)
+    one_sd_less <- mean_value - sd(column_data, na.rm = TRUE)
+    one_sd_more <- mean_value + sd(column_data, na.rm = TRUE)
+    
+    ggplot(data = dataset, aes(x = .data[[column]])) +
+        geom_density() +
+        geom_vline(
+            xintercept = c(mean_value, one_sd_less, one_sd_more, value),
+            color = c("green", "blue", "red", color_theme)
+        ) +
+        annotate(
+            "text",
+            x = c(mean_value, one_sd_less, one_sd_more, value),
+            y = 0.05,
+            label = c("mean_value", "one_sd_less", "one_sd_more", "Your given value"),
+            color = c("green", "blue", "red", color_theme)
+        )
+}
 
 
-ggplot(data = lifelines_df, aes(x = AGE_T1)) +
-  geom_density() +
-  geom_vline(xintercept = c(mean_value, one_sd_less, one_sd_more),
-             color = c("green", "blue", "red")) +
-  annotate("text", x = c(mean_value, one_sd_less, one_sd_more),
-           y = 0.05, label = c("mean_value", "one_sd_less", "one_sd_more"),
-           color = c("green", "blue", "red"))
+sd_viewer(lifelines_df, "AGE_T1", 26, "green")
 ```
 
 ```{r}
@@ -651,4 +664,39 @@ comparison_graph <- function(dataset, x_comp, y_comp, count_var, color_theme, gr
 
 comparison_graph(lifelines_df, "AGE_T1", "WEIGHT_T1", FALSE, "blue", "boxplot", 1)
 ```
+18-01-2025:
+Mapping test to be able to use a human readable variable instead of the cryptic columnames that are used in the dataframe. 
 
+```{r}
+column_mapper <- c(
+  "Gender" = "GENDER",
+  "Age" = "AGE_T1",
+  "Height" = "HEIGHT_T1",
+  "Weight" = "WEIGHT_T1",
+  "BMI" = "BMI_T1",
+  "Waist Circumference" = "WAIST_T1",
+  "Number of Pregnancies" = "PREGNANCIES",
+  "Financial Status" = "FINANCE_T1",
+  "Lower Education Level" = "EDUCATION_LOWER_T1",
+  "Low Quality of Life" = "LOW_QUALITY_OF_LIFE_T1",
+  "Diastolic Blood Pressure" = "DBP_T1",
+  "Systolic Blood Pressure" = "SBP_T1",
+  "Pulse rate baseline" = "HBF_T1",
+  "Cholesterol Level" = "CHO_T1",
+  "Glucose Level" = "GLU_T1",
+  "Mental Disorder" = "MENTAL_DISORDER_T1",
+  "Stressful Life Events pased year" = "LTE_SUM_T1",
+  "Total amount of stess" = "LDI_SUM_T1",
+  "Depression at baseline" = "DEPRESSION_T1",
+  "Competence Score" = "C_SUM_T1",
+  "Anger-hostility Score" = "A_SUM_T1",
+  "Self-consciousness Score" = "SC_SUM_T1",
+  "Impulsivity Score" = "I_SUM_T1",
+  "Extraversion Score" = "E_SUM_T1",
+  "Self-discipline" = "SD_SUM_T1",
+  "Vulnerability Score" = "V_SUM_T1",
+  "Deliberation Score" = "D_SUM_T1"
+)
+
+column_mapper[["BMI"]]
+```
